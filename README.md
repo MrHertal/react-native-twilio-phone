@@ -86,6 +86,16 @@ Now come the easy part :)
 npm install react-native-twilio-phone
 ```
 
+### iOS
+
+Run this command to complete installation on iOS:
+
+```sh
+cd ios/ && pod install
+```
+
+You must also create a Swift file like [this one](https://github.com/MrHertal/react-native-twilio-phone/blob/master/example/ios/File.swift) in the `/ios` folder. If you don't have such a file, your app won't build.
+
 ## Usage
 
 ### RNTwilioPhone
