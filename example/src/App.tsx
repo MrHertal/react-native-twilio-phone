@@ -49,9 +49,7 @@ export function App() {
   const [callInProgress, setCallInProgress] = React.useState(false);
 
   React.useEffect(() => {
-    return RNTwilioPhone.initialize(callKeepOptions, fetchAccessToken, {
-      requestPermissionsOnInit: false,
-    });
+    return RNTwilioPhone.initialize(callKeepOptions, fetchAccessToken);
   }, []);
 
   React.useEffect(() => {

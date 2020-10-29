@@ -135,15 +135,20 @@ async function fetchAccessToken() {
   return accessToken;
 }
 
+// RNTwilioPhone options
+const options = {
+  requestPermissionsOnInit: true, // Default: true - Set to false if you want to request permissions manually
+};
+
 export function MyComponent() {
   // Initialize once when component did mount
   // Execute returned function when component will unmount to avoid memory leaks
   React.useEffect(() => {
     // This will set up CallKeep and register device for incoming calls
-    return RNTwilioPhone.initialize(callKeepOptions, fetchAccessToken);
+    return RNTwilioPhone.initialize(callKeepOptions, fetchAccessToken, options);
 
     // Or use initializeCallKeep if you just want to make outgoing calls
-    // return RNTwilioPhone.initializeCallKeep(callKeepOptions, fetchAccessToken);
+    // return RNTwilioPhone.initializeCallKeep(callKeepOptions, fetchAccessToken, options);
   }, []);
 
   // Function that starts an outgoing call
@@ -266,7 +271,32 @@ type TwilioPhoneType = {
   unregister(accessToken: string, deviceToken: string): void;
   activateAudio(): void; // iOS only
   deactivateAudio(): void; // iOS only
+  checkPermissions(callback: (permissions: Permissions) => void): void;
 };
+```
+
+### Request permissions manually
+
+If you don't want to request permissions on initialization, set `requestPermissionsOnInit` option to `false`:
+
+```jsx
+// ...
+
+export function MyComponent() {
+  React.useEffect(() => {
+    return RNTwilioPhone.initialize(callKeepOptions, fetchAccessToken, {
+      requestPermissionsOnInit: false,
+    });
+  }, []);
+}
+```
+
+You can request permissions later by calling `checkPermissions` method on `TwilioPhone`:
+
+```javascript
+TwilioPhone.checkPermissions((permissions) => {
+  console.log(permissions); // Display the required permissions and their status
+});
 ```
 
 ## Example app
