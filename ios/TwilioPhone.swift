@@ -192,6 +192,32 @@ class TwilioPhone: RCTEventEmitter {
         audioDevice.isEnabled = false
     }
     
+    @objc(checkPermissions:)
+    func checkPermissions(callback: RCTResponseSenderBlock) {
+        NSLog("[TwilioPhone] Checking permissions")
+        
+        var permissions: [String: String] = [:]
+        
+        let permissionStatus = AVAudioSession.sharedInstance().recordPermission
+        
+        switch permissionStatus {
+        case .granted:
+            permissions["RECORD"] = "GRANTED"
+        case .denied:
+            permissions["RECORD"] = "DENIED"
+        case .undetermined:
+            permissions["RECORD"] = "UNDETERMINED"
+            
+            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                NSLog("[TwilioPhone] Record permission granted: \(granted)")
+            }
+        default:
+            permissions["RECORD"] = "UNKNOWN"
+        }
+        
+        callback([permissions])
+    }
+    
     func hexToData(str: String) -> Data {
         let len = str.count / 2
         var data = Data(capacity: len)

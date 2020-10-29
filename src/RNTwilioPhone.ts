@@ -10,9 +10,17 @@ import {
 import VoipPushNotification from 'react-native-voip-push-notification';
 import ramdomUuid from 'uuid-random';
 
+export type RNTwilioPhoneOptions = {
+  requestPermissionsOnInit: boolean; // Android only, default: true
+};
+
 type Call = {
   uuid: string;
   sid: string | null;
+};
+
+const defaultOptions: RNTwilioPhoneOptions = {
+  requestPermissionsOnInit: true,
 };
 
 const CK_CONSTANTS = {
@@ -35,11 +43,13 @@ class RNTwilioPhone {
 
   static initialize(
     callKeepOptions: IOptions,
-    fetchAccessToken: () => Promise<string>
+    fetchAccessToken: () => Promise<string>,
+    options = defaultOptions
   ) {
     const unsubscribeCallKeep = RNTwilioPhone.initializeCallKeep(
       callKeepOptions,
-      fetchAccessToken
+      fetchAccessToken,
+      options
     );
 
     const unsubscribeRegisterAndroid = RNTwilioPhone.registerAndroid();
@@ -54,15 +64,24 @@ class RNTwilioPhone {
 
   static initializeCallKeep(
     callKeepOptions: IOptions,
-    fetchAccessToken: () => Promise<string>
+    fetchAccessToken: () => Promise<string>,
+    options = defaultOptions
   ) {
+    const { requestPermissionsOnInit } = options;
+
     RNTwilioPhone.fetchAccessToken = fetchAccessToken;
 
-    RNCallKeep.setup(callKeepOptions)
-      .then(() => {
-        RNCallKeep.setAvailable(true);
-      })
-      .catch((e) => console.log(e));
+    if (Platform.OS === 'ios' || requestPermissionsOnInit) {
+      RNCallKeep.setup(callKeepOptions)
+        .then(() => {
+          RNCallKeep.setAvailable(true);
+        })
+        .catch((e) => console.log(e));
+    } else {
+      RNCallKeep.registerPhoneAccount();
+      RNCallKeep.registerAndroidEvents();
+      RNCallKeep.setAvailable(true);
+    }
 
     const unsubscribeTwilioPhone = RNTwilioPhone.listenTwilioPhone();
     const unsubscribeCallKeep = RNTwilioPhone.listenCallKeep();
