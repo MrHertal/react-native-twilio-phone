@@ -48,7 +48,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) : ReactContextBas
 
   @ReactMethod
   fun handleMessage(payload: ReadableMap) {
-    Log.d(tag, "Handling message")
+    Log.i(tag, "Handling message")
 
     val data = Bundle()
 
@@ -216,6 +216,8 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) : ReactContextBas
 
   @ReactMethod
   fun checkPermissions(callback: Callback) {
+    Log.i(tag, "Checking permissions")
+
     val permissionsToRequest = mutableListOf<String>()
 
     val recordAudio = checkPermission(android.Manifest.permission.RECORD_AUDIO)
