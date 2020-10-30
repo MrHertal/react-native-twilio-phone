@@ -2,11 +2,11 @@ import TwilioVoice
 
 @objc(TwilioPhone)
 class TwilioPhone: RCTEventEmitter {
+    var hasListeners = false
     var audioDevice = DefaultAudioDevice()
     
     var activeCallInvites: [String: CallInvite]! = [:]
     var activeCalls: [String: Call]! = [:]
-    
     var activeCall: Call?
     
     override func supportedEvents() -> [String]! {
@@ -27,6 +27,14 @@ class TwilioPhone: RCTEventEmitter {
         ]
     }
     
+    override func startObserving() {
+        hasListeners = true
+    }
+    
+    override func stopObserving() {
+        hasListeners = false
+    }
+    
     @objc
     override static func requiresMainQueueSetup() -> Bool {
         return true
@@ -42,11 +50,15 @@ class TwilioPhone: RCTEventEmitter {
             if let error = error {
                 NSLog("[TwilioPhone] An error occurred while registering: \(error.localizedDescription)")
                 
-                self.sendEvent(withName: "RegistrationFailure", body: ["errorMessage": error.localizedDescription])
+                if self.hasListeners {
+                    self.sendEvent(withName: "RegistrationFailure", body: ["errorMessage": error.localizedDescription])
+                }
             } else {
                 NSLog("[TwilioPhone] Successfully registered for VoIP push notifications")
                 
-                self.sendEvent(withName: "RegistrationSuccess", body: nil)
+                if self.hasListeners {
+                    self.sendEvent(withName: "RegistrationSuccess", body: nil)
+                }
             }
         }
     }
@@ -169,11 +181,15 @@ class TwilioPhone: RCTEventEmitter {
             if let error = error {
                 NSLog("[TwilioPhone] An error occurred while unregistering: \(error.localizedDescription)")
                 
-                self.sendEvent(withName: "UnregistrationFailure", body: ["errorMessage": error.localizedDescription])
+                if self.hasListeners {
+                    self.sendEvent(withName: "UnregistrationFailure", body: ["errorMessage": error.localizedDescription])
+                }
             } else {
                 NSLog("[TwilioPhone] Successfully unregistered from VoIP push notifications")
                 
-                self.sendEvent(withName: "UnregistrationSuccess", body: nil)
+                if self.hasListeners {
+                    self.sendEvent(withName: "UnregistrationSuccess", body: nil)
+                }
             }
         }
     }
@@ -262,51 +278,65 @@ extension TwilioPhone: CallDelegate {
             activeCall = nil
         }
         
-        sendEvent(withName: "CallRinging", body: ["callSid": call.sid])
+        if hasListeners {
+            sendEvent(withName: "CallRinging", body: ["callSid": call.sid])
+        }
     }
     
     func callDidFailToConnect(call: Call, error: Error) {
         NSLog("[TwilioPhone] Call failed to connect: \(error.localizedDescription)")
         
-        sendEvent(withName: "CallConnectFailure", body: [
-            "callSid": call.sid,
-            "errorMessage": error.localizedDescription
-        ])
+        if hasListeners {
+            sendEvent(withName: "CallConnectFailure", body: [
+                "callSid": call.sid,
+                "errorMessage": error.localizedDescription
+            ])
+        }
     }
     
     func callDidConnect(call: Call) {
         NSLog("[TwilioPhone] Call did connect")
         
-        sendEvent(withName: "CallConnected", body: ["callSid": call.sid])
+        if hasListeners {
+            sendEvent(withName: "CallConnected", body: ["callSid": call.sid])
+        }
     }
     
     func callIsReconnecting(call: Call, error: Error) {
         NSLog("[TwilioPhone] Call is reconnecting with error: \(error.localizedDescription)")
         
-        sendEvent(withName: "CallReconnecting", body: [
-            "callSid": call.sid,
-            "errorMessage": error.localizedDescription
-        ])
+        if hasListeners {
+            sendEvent(withName: "CallReconnecting", body: [
+                "callSid": call.sid,
+                "errorMessage": error.localizedDescription
+            ])
+        }
     }
     
     func callDidReconnect(call: Call) {
         NSLog("[TwilioPhone] Call did reconnect")
         
-        sendEvent(withName: "CallReconnected", body: ["callSid": call.sid])
+        if hasListeners {
+            sendEvent(withName: "CallReconnected", body: ["callSid": call.sid])
+        }
     }
     
     func callDidDisconnect(call: Call, error: Error?) {
         if let error = error {
             NSLog("[TwilioPhone] Call disconnected with error: \(error.localizedDescription)")
             
-            sendEvent(withName: "CallDisconnectedError", body: [
-                "callSid": call.sid,
-                "errorMessage": error.localizedDescription
-            ])
+            if hasListeners {
+                sendEvent(withName: "CallDisconnectedError", body: [
+                    "callSid": call.sid,
+                    "errorMessage": error.localizedDescription
+                ])
+            }
         } else {
             NSLog("[TwilioPhone] Call disconnected")
             
-            sendEvent(withName: "CallDisconnected", body: ["callSid": call.sid])
+            if hasListeners {
+                sendEvent(withName: "CallDisconnected", body: ["callSid": call.sid])
+            }
         }
         
         activeCalls.removeValue(forKey: call.sid)
@@ -328,10 +358,12 @@ extension TwilioPhone: NotificationDelegate {
             }
         }
         
-        sendEvent(withName: "CallInvite", body: [
-            "callSid": callInvite.callSid,
-            "from": callInvite.from
-        ])
+        if hasListeners {
+            sendEvent(withName: "CallInvite", body: [
+                "callSid": callInvite.callSid,
+                "from": callInvite.from
+            ])
+        }
     }
     
     func cancelledCallInviteReceived(cancelledCallInvite: CancelledCallInvite, error: Error) {
@@ -339,6 +371,8 @@ extension TwilioPhone: NotificationDelegate {
         
         activeCallInvites.removeValue(forKey: cancelledCallInvite.callSid)
         
-        sendEvent(withName: "CancelledCallInvite", body: ["callSid": cancelledCallInvite.callSid])
+        if hasListeners {
+            sendEvent(withName: "CancelledCallInvite", body: ["callSid": cancelledCallInvite.callSid])
+        }
     }
 }

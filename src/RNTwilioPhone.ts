@@ -11,7 +11,7 @@ import VoipPushNotification from 'react-native-voip-push-notification';
 import ramdomUuid from 'uuid-random';
 
 export type RNTwilioPhoneOptions = {
-  requestPermissionsOnInit: boolean; // Android only, default: true
+  requestPermissionsOnInit: boolean; // Default: true
 };
 
 type Call = {
