@@ -1,8 +1,23 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { RNTwilioPhone } from './RNTwilioPhone';
 
+export enum PermissionName {
+  Record = 'RECORD', // iOS only
+  RecordAudio = 'RECORD_AUDIO', // Android only
+  ReadPhoneState = 'READ_PHONE_STATE', // Android only
+  CallPhone = 'CALL_PHONE', // Android only
+}
+
+export enum PermissionStatus {
+  Granted = 'GRANTED',
+  Denied = 'DENIED',
+  Undetermined = 'UNDETERMINED', // iOS only
+  Unknown = 'UNKNOWN',
+}
+
 export type MessagePayload = Record<string, string>;
 export type ConnectParams = Record<string, string>;
+export type Permissions = Record<PermissionName, PermissionStatus>;
 
 type TwilioPhoneType = {
   register(accessToken: string, deviceToken: string): void;
@@ -18,6 +33,7 @@ type TwilioPhoneType = {
   unregister(accessToken: string, deviceToken: string): void;
   activateAudio(): void; // iOS only
   deactivateAudio(): void; // iOS only
+  checkPermissions(callback: (permissions: Permissions) => void): void;
 };
 
 const TwilioPhone = NativeModules.TwilioPhone as TwilioPhoneType;

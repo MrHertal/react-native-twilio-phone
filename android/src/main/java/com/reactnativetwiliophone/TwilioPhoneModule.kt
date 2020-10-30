@@ -1,7 +1,10 @@
 package com.reactnativetwiliophone
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.twilio.voice.*
@@ -45,7 +48,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) : ReactContextBas
 
   @ReactMethod
   fun handleMessage(payload: ReadableMap) {
-    Log.d(tag, "Handling message")
+    Log.i(tag, "Handling message")
 
     val data = Bundle()
 
@@ -211,6 +214,39 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) : ReactContextBas
     })
   }
 
+  @ReactMethod
+  fun checkPermissions(callback: Callback) {
+    Log.i(tag, "Checking permissions")
+
+    val permissionsToRequest = mutableListOf<String>()
+
+    val recordAudio = checkPermission(android.Manifest.permission.RECORD_AUDIO)
+    if (recordAudio != "GRANTED") {
+      permissionsToRequest.add(android.Manifest.permission.RECORD_AUDIO)
+    }
+
+    val readPhoneState = checkPermission(android.Manifest.permission.READ_PHONE_STATE)
+    if (readPhoneState != "GRANTED") {
+      permissionsToRequest.add(android.Manifest.permission.READ_PHONE_STATE)
+    }
+
+    val callPhone = checkPermission(android.Manifest.permission.CALL_PHONE)
+    if (callPhone != "GRANTED") {
+      permissionsToRequest.add(android.Manifest.permission.CALL_PHONE)
+    }
+
+    if (permissionsToRequest.isNotEmpty()) {
+      currentActivity?.let { ActivityCompat.requestPermissions(it, permissionsToRequest.toTypedArray(), 1) }
+    }
+
+    val permissions = Arguments.createMap()
+    permissions.putString("RECORD_AUDIO", recordAudio)
+    permissions.putString("READ_PHONE_STATE", readPhoneState)
+    permissions.putString("CALL_PHONE", callPhone)
+
+    callback(permissions)
+  }
+
   private fun sendEvent(reactContext: ReactContext,
                         eventName: String,
                         params: WritableMap?) {
@@ -308,6 +344,18 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) : ReactContextBas
 
           sendEvent(reactApplicationContext, "CallDisconnected", params)
         }
+      }
+    }
+  }
+
+  private fun checkPermission(permission: String): String {
+    val activity = currentActivity ?: return "UNKNOWN"
+
+    return when (ContextCompat.checkSelfPermission(activity, permission)) {
+      PackageManager.PERMISSION_GRANTED -> "GRANTED"
+      PackageManager.PERMISSION_DENIED -> "DENIED"
+      else -> {
+        "UNKNOWN"
       }
     }
   }
