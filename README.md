@@ -66,7 +66,21 @@ The following modifications must be made on `AppDelegate.m` in order to handle T
   [RNVoipPushNotificationManager didReceiveIncomingPushWithPayload:payload forType:(NSString *)type];
 
   // --- You should make sure to report to callkit BEFORE execute `completion()`
-  [RNCallKeep reportNewIncomingCall:uuid handle:handle handleType:@"generic" hasVideo:false localizedCallerName:callerName fromPushKit:YES payload:payload.dictionaryPayload];
+  [RNCallKeep reportNewIncomingCall:uuid
+                             handle:handle
+                         handleType:@"generic"
+                           hasVideo:NO
+                localizedCallerName:callerName
+                    supportsHolding:YES
+                       supportsDTMF:YES
+                   supportsGrouping:YES
+                 supportsUngrouping:YES
+                        fromPushKit:YES
+                            payload:payload.dictionaryPayload
+              withCompletionHandler:nil];
+
+  // or if you still use CallKeep v3
+  // [RNCallKeep reportNewIncomingCall:uuid handle:handle handleType:@"generic" hasVideo:false localizedCallerName:callerName fromPushKit:YES payload:payload.dictionaryPayload];
 
   completion();
 }
