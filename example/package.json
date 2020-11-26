@@ -13,7 +13,7 @@
     "@react-native-firebase/messaging": "^10.0.0",
     "react": "16.13.1",
     "react-native": "0.63.3",
-    "react-native-callkeep": "^4.0.0",
+    "react-native-callkeep": "^4.0.1",
     "react-native-voip-push-notification": "^2.1.0"
   },
   "devDependencies": {

@@ -872,17 +872,17 @@
     wcwidth "^1.0.1"
 
 "@react-native-firebase/app@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-10.0.0.tgz#dc18af26accb31028eab00dd36f486fee046e63e"
-  integrity sha512-hvmEOj3vMeaoYX8Q7f2UZCSVGv0VMvTR/RUUka0y7Xmyzg3kpdb2EHCOoqLIN9ySPf5b/At5I6GVazQugbZqLA==
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-10.1.0.tgz#4242933c52b4b753ba48216092c0447677118342"
+  integrity sha512-O8IxJU0K3mmmxaz2EZW+BuC08agr3m2eybxBq+SkcJri1fv95qVsNabABWPS7h4uSHQ5m1qHCtQJnvbnHwMrvA==
   dependencies:
     opencollective-postinstall "^2.0.1"
     superstruct "^0.6.2"
 
 "@react-native-firebase/messaging@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-10.0.0.tgz#fe0bd993e80dbccffd7c5c21ee04754f2196ad81"
-  integrity sha512-XSoHSVvxR5MRzkJ/RQWzO3LQ29N13fWckttd5oxur2OtEMHZM7CseWqlN3fcWcoGNZXh17HXu9XlxsznE/kzxA==
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-10.1.0.tgz#adbeaae52db5c2aea2f61a98490bd107dd444e97"
+  integrity sha512-g8lDlkxcA/0AXtfx79DQiELtvX9z81mskxEA0wJLEd1QetP1sQsvIvoMzHIsj8Zzj3+Gn0Hz+qFcz/pJJ8ceRQ==
 
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.3"
@@ -2257,9 +2257,9 @@ is-ci@^2.0.0:
     ci-info "^2.0.0"
 
 is-core-module@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.1.0.tgz#a4cc031d9b1aca63eecbd18a650e13cb4eeab946"
-  integrity sha512-YcV7BgVMRFRua2FqQzKtTDMz8iCuLEyGKjr70q8Zm1yy2qKcurbFEd79PAdHV77oL3NrAaOVQIbMmiHQCHB7ZA==
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.2.0.tgz#97037ef3d52224d85163f5597b2b63d9afed981a"
+  integrity sha512-XRAfAdyyY5F5cOXn7hYQDqh2Xmii+DEfIcQGxK/uNwMHhIkPWO0g8msXcbzLe+MpGoR951MlqM/2iIlU4vKDdQ==
   dependencies:
     has "^1.0.3"
 
@@ -3527,10 +3527,10 @@ react-is@^16.12.0, react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-native-callkeep@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-callkeep/-/react-native-callkeep-4.0.0.tgz#e3321e890da9834b0518c35f1fa0251cce24aeec"
-  integrity sha512-Mw5B1GnapNpwxoBFYl12TylYe7hqe21jmGrfQULmA22NTrIdwbVJsCP1RGKQVJZIUm3dzQ+ZiC3dcqRoCZlXVg==
+react-native-callkeep@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-callkeep/-/react-native-callkeep-4.0.1.tgz#533e0b8a0cf0ebe4600c5e3186ee324deb24cee1"
+  integrity sha512-TCzIL4Yc8yGqhk84tQW8BAFuoiNNC64J2fkyMFfKd/sDGvIKveEC/JvzzgmMMibQY9J85ful64FyWuvGU1XODw==
 
 react-native-voip-push-notification@^2.1.0:
   version "2.1.0"
@@ -4470,9 +4470,9 @@ xtend@~4.0.1:
   integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
 
 y18n@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/y18n/-/y18n-4.0.0.tgz#95ef94f85ecc81d007c264e190a120f0a3c8566b"
-  integrity sha512-r9S/ZyXu/Xu9q1tYlpsLIsa3EeLXXk0VwlxqTcFRfg9EhMW+17kbt9G0NrgCmhGb5vT2hyhJZLfDGx+7+5Uj/w==
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/y18n/-/y18n-4.0.1.tgz#8db2b83c31c5d75099bb890b23f3094891e247d4"
+  integrity sha512-wNcy4NvjMYL8gogWWYAO7ZFWFfHcbdbE57tZO8e4cbpj8tfUcwrwqSl3ad8HxpYWCdXcJUCeKKZS62Av1affwQ==
 
 yallist@^2.1.2:
   version "2.1.2"

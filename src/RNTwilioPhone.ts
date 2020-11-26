@@ -122,7 +122,7 @@ class RNTwilioPhone {
     RNTwilioPhone.addCall({ uuid, sid: null });
     RNTwilioPhone.activeCall = { uuid, sid: null };
 
-    RNCallKeep.startCall(uuid, to, calleeName);
+    RNCallKeep.startCall(uuid, to, calleeName, 'generic');
   }
 
   static async unregister() {

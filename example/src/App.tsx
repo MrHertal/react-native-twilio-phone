@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   Button,
@@ -19,16 +19,19 @@ const identity = 'alice';
 const callKeepOptions = {
   ios: {
     appName: 'TwilioPhone Example',
-    supportsVideo: false,
-    maximumCallGroups: '1',
-    maximumCallsPerCallGroup: '1',
   },
   android: {
     alertTitle: 'Permissions required',
     alertDescription: 'This application needs to access your phone accounts',
     cancelButton: 'Cancel',
-    okButton: 'ok',
+    okButton: 'OK',
     additionalPermissions: [],
+    // Required to get audio in background when using Android 11
+    foregroundService: {
+      channelId: 'com.example.reactnativetwiliophone',
+      channelName: 'Foreground service for my app',
+      notificationTitle: 'My app is running on background',
+    },
   },
 };
 
