@@ -175,7 +175,8 @@ class RNTwilioPhone {
     VoipPushNotification.addEventListener(
       'notification',
       (notification: any) => {
-        TwilioPhone.handleMessage(notification.getData());
+        delete notification.aps;
+        TwilioPhone.handleMessage(notification);
       }
     );
 
