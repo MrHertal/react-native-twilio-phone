@@ -880,9 +880,9 @@
     superstruct "^0.6.2"
 
 "@react-native-firebase/messaging@^10.0.0":
-  version "10.1.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-10.1.0.tgz#adbeaae52db5c2aea2f61a98490bd107dd444e97"
-  integrity sha512-g8lDlkxcA/0AXtfx79DQiELtvX9z81mskxEA0wJLEd1QetP1sQsvIvoMzHIsj8Zzj3+Gn0Hz+qFcz/pJJ8ceRQ==
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-10.1.1.tgz#4b524df081442d28f484650dbdc98d34eb0b74d5"
+  integrity sha512-ahbuxetfe4YjB4Owgmr+4WNwCwpjFCWhVcvF7I7LsDSV7amOQ4+1/kRg1LskX4ToFkK395p+GG59X7/Fs0J0/g==
 
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.3"
@@ -922,9 +922,9 @@
     "@types/yargs-parser" "*"
 
 "@types/yargs@^15.0.0":
-  version "15.0.10"
-  resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-15.0.10.tgz#0fe3c8173a0d5c3e780b389050140c3f5ea6ea74"
-  integrity sha512-z8PNtlhrj7eJNLmrAivM7rjBESG6JwC5xP3RVk12i/8HVP7Xnx/sEmERnRImyEuUaJfO942X0qMOYsoupaJbZQ==
+  version "15.0.11"
+  resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-15.0.11.tgz#361d7579ecdac1527687bcebf9946621c12ab78c"
+  integrity sha512-jfcNBxHFYJ4nPIacsi3woz1+kvUO6s1CyeEhtnDHBjHUMNj5UlW2GynmnSgiJJEdNg9yW5C8lfoNRZrHGv5EqA==
   dependencies:
     "@types/yargs-parser" "*"
 
@@ -3532,10 +3532,10 @@ react-native-callkeep@^4.0.1:
   resolved "https://registry.yarnpkg.com/react-native-callkeep/-/react-native-callkeep-4.0.1.tgz#533e0b8a0cf0ebe4600c5e3186ee324deb24cee1"
   integrity sha512-TCzIL4Yc8yGqhk84tQW8BAFuoiNNC64J2fkyMFfKd/sDGvIKveEC/JvzzgmMMibQY9J85ful64FyWuvGU1XODw==
 
-react-native-voip-push-notification@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-voip-push-notification/-/react-native-voip-push-notification-2.1.0.tgz#3a580be2da72cf1a4834d2a491c1789a8f72c541"
-  integrity sha512-ihR/E5iRD+4NM6DL5wcVLC8wn+Oo6TErTwQdIuO1ZeWpIOLp6X4baNJ+fwxiuT9oIHqfMOJWUGQ9TRESOcTOoQ==
+react-native-voip-push-notification@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-voip-push-notification/-/react-native-voip-push-notification-3.0.0.tgz#c4e04f0da19e8fc7b3807429e8e730d384127a2c"
+  integrity sha512-Ba+R3IdHUKDRjyXnCrGFgnvxI06tuswJkdTztCDVX5k5xZhWii/8GBnor4Dq4vy487zQPjGHbneIO07hHkwBqg==
 
 react-native@0.63.3:
   version "0.63.3"
