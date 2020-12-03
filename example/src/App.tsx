@@ -14,7 +14,15 @@ import {
   twilioPhoneEmitter,
 } from 'react-native-twilio-phone';
 
-const identity = 'alice';
+const identity = Platform.select({
+  ios: 'Steve',
+  android: 'Larry',
+});
+
+const from = Platform.select({
+  ios: 'client:Steve',
+  android: 'client:Larry',
+});
 
 const callKeepOptions = {
   ios: {
@@ -91,7 +99,7 @@ export function App() {
     setCallInProgress(true);
 
     try {
-      await RNTwilioPhone.startCall(to, 'My friend');
+      await RNTwilioPhone.startCall(to, 'My friend', from);
     } catch (e) {
       console.log(e);
       setCallInProgress(false);
@@ -111,7 +119,7 @@ export function App() {
   if (callInProgress) {
     content = (
       <View>
-        <ActivityIndicator style={styles.loader} />
+        <ActivityIndicator color="#999" style={styles.loader} />
         <Button title="End call" onPress={hangup} />
       </View>
     );
