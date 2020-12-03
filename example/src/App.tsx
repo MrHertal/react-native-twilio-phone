@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   Button,
@@ -14,21 +14,33 @@ import {
   twilioPhoneEmitter,
 } from 'react-native-twilio-phone';
 
-const identity = 'alice';
+const identity = Platform.select({
+  ios: 'Steve',
+  android: 'Larry',
+});
+
+const from = Platform.select({
+  ios: 'client:Steve',
+  android: 'client:Larry',
+});
 
 const callKeepOptions = {
   ios: {
     appName: 'TwilioPhone Example',
     supportsVideo: false,
-    maximumCallGroups: '1',
-    maximumCallsPerCallGroup: '1',
   },
   android: {
     alertTitle: 'Permissions required',
     alertDescription: 'This application needs to access your phone accounts',
     cancelButton: 'Cancel',
-    okButton: 'ok',
+    okButton: 'OK',
     additionalPermissions: [],
+    // Required to get audio in background when using Android 11
+    foregroundService: {
+      channelId: 'com.example.reactnativetwiliophone',
+      channelName: 'Foreground service for my app',
+      notificationTitle: 'My app is running on background',
+    },
   },
 };
 
@@ -88,7 +100,7 @@ export function App() {
     setCallInProgress(true);
 
     try {
-      await RNTwilioPhone.startCall(to, 'My friend');
+      await RNTwilioPhone.startCall(to, 'My friend', from);
     } catch (e) {
       console.log(e);
       setCallInProgress(false);
@@ -108,7 +120,7 @@ export function App() {
   if (callInProgress) {
     content = (
       <View>
-        <ActivityIndicator style={styles.loader} />
+        <ActivityIndicator color="#999" style={styles.loader} />
         <Button title="End call" onPress={hangup} />
       </View>
     );

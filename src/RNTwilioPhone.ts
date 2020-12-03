@@ -15,7 +15,7 @@ export type RNTwilioPhoneOptions = {
 };
 
 type Call = {
-  uuid: string;
+  uuid: string | null;
   sid: string | null;
 };
 
@@ -119,10 +119,9 @@ class RNTwilioPhone {
     TwilioPhone.startCall(accessToken, params);
 
     const uuid = ramdomUuid().toLowerCase();
-    RNTwilioPhone.addCall({ uuid, sid: null });
-    RNTwilioPhone.activeCall = { uuid, sid: null };
+    RNTwilioPhone.activeCall = { uuid: null, sid: null };
 
-    RNCallKeep.startCall(uuid, to, calleeName);
+    RNCallKeep.startCall(uuid, to, calleeName, 'generic');
   }
 
   static async unregister() {
@@ -216,8 +215,14 @@ class RNTwilioPhone {
         }
       ),
       twilioPhoneEmitter.addListener(EventType.CallRinging, ({ callSid }) => {
-        RNTwilioPhone.setCallSid(callSid);
-        RNTwilioPhone.activeCall = null;
+        if (RNTwilioPhone.activeCall) {
+          RNTwilioPhone.activeCall.sid = callSid;
+
+          if (RNTwilioPhone.activeCall.uuid) {
+            RNTwilioPhone.addCall(RNTwilioPhone.activeCall);
+            RNTwilioPhone.activeCall = null;
+          }
+        }
       }),
       twilioPhoneEmitter.addListener(EventType.CallConnected, ({ callSid }) => {
         const uuid = RNTwilioPhone.getCallUUID(callSid);
@@ -285,6 +290,17 @@ class RNTwilioPhone {
       });
     }
 
+    RNCallKeep.addEventListener('didReceiveStartCallAction', ({ callUUID }) => {
+      if (RNTwilioPhone.activeCall) {
+        RNTwilioPhone.activeCall.uuid = callUUID;
+
+        if (RNTwilioPhone.activeCall.sid) {
+          RNTwilioPhone.addCall(RNTwilioPhone.activeCall);
+          RNTwilioPhone.activeCall = null;
+        }
+      }
+    });
+
     RNCallKeep.addEventListener('answerCall', ({ callUUID }) => {
       const sid = RNTwilioPhone.getCallSid(callUUID);
 
@@ -334,6 +350,7 @@ class RNTwilioPhone {
         RNCallKeep.removeEventListener('didDeactivateAudioSession');
       }
 
+      RNCallKeep.removeEventListener('didReceiveStartCallAction');
       RNCallKeep.removeEventListener('answerCall');
       RNCallKeep.removeEventListener('endCall');
       RNCallKeep.removeEventListener('didPerformSetMutedCallAction');
@@ -390,18 +407,6 @@ class RNTwilioPhone {
     }
 
     return null;
-  }
-
-  private static setCallSid(sid: string) {
-    if (!RNTwilioPhone.activeCall) {
-      return;
-    }
-
-    for (const call of RNTwilioPhone.calls) {
-      if (call.uuid === RNTwilioPhone.activeCall.uuid) {
-        call.sid = sid;
-      }
-    }
   }
 }
 

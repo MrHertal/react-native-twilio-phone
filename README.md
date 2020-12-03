@@ -66,7 +66,18 @@ The following modifications must be made on `AppDelegate.m` in order to handle T
   [RNVoipPushNotificationManager didReceiveIncomingPushWithPayload:payload forType:(NSString *)type];
 
   // --- You should make sure to report to callkit BEFORE execute `completion()`
-  [RNCallKeep reportNewIncomingCall:uuid handle:handle handleType:@"generic" hasVideo:false localizedCallerName:callerName fromPushKit:YES payload:payload.dictionaryPayload];
+  [RNCallKeep reportNewIncomingCall:uuid
+                             handle:handle
+                         handleType:@"generic"
+                           hasVideo:NO
+                localizedCallerName:callerName
+                    supportsHolding:YES
+                       supportsDTMF:YES
+                   supportsGrouping:YES
+                 supportsUngrouping:YES
+                        fromPushKit:YES
+                            payload:payload.dictionaryPayload
+              withCompletionHandler:nil];
 
   completion();
 }
@@ -113,15 +124,19 @@ const callKeepOptions = {
   ios: {
     appName: 'TwilioPhone Example',
     supportsVideo: false,
-    maximumCallGroups: '1',
-    maximumCallsPerCallGroup: '1',
   },
   android: {
     alertTitle: 'Permissions required',
     alertDescription: 'This application needs to access your phone accounts',
     cancelButton: 'Cancel',
-    okButton: 'ok',
+    okButton: 'OK',
     additionalPermissions: [],
+    // Required to get audio in background when using Android 11
+    foregroundService: {
+      channelId: 'com.example.reactnativetwiliophone',
+      channelName: 'Foreground service for my app',
+      notificationTitle: 'My app is running on background',
+    },
   },
 };
 
