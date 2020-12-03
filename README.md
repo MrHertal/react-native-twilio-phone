@@ -79,9 +79,6 @@ The following modifications must be made on `AppDelegate.m` in order to handle T
                             payload:payload.dictionaryPayload
               withCompletionHandler:nil];
 
-  // or if you still use CallKeep v3
-  // [RNCallKeep reportNewIncomingCall:uuid handle:handle handleType:@"generic" hasVideo:false localizedCallerName:callerName fromPushKit:YES payload:payload.dictionaryPayload];
-
   completion();
 }
 ```
@@ -127,15 +124,19 @@ const callKeepOptions = {
   ios: {
     appName: 'TwilioPhone Example',
     supportsVideo: false,
-    maximumCallGroups: '1',
-    maximumCallsPerCallGroup: '1',
   },
   android: {
     alertTitle: 'Permissions required',
     alertDescription: 'This application needs to access your phone accounts',
     cancelButton: 'Cancel',
-    okButton: 'ok',
+    okButton: 'OK',
     additionalPermissions: [],
+    // Required to get audio in background when using Android 11
+    foregroundService: {
+      channelId: 'com.example.reactnativetwiliophone',
+      channelName: 'Foreground service for my app',
+      notificationTitle: 'My app is running on background',
+    },
   },
 };
 

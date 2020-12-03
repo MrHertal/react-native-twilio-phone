@@ -27,6 +27,7 @@ const from = Platform.select({
 const callKeepOptions = {
   ios: {
     appName: 'TwilioPhone Example',
+    supportsVideo: false,
   },
   android: {
     alertTitle: 'Permissions required',
