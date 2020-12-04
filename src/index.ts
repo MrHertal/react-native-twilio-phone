@@ -4,7 +4,6 @@ import { RNTwilioPhone } from './RNTwilioPhone';
 export enum PermissionName {
   Record = 'RECORD', // iOS only
   RecordAudio = 'RECORD_AUDIO', // Android only
-  ReadPhoneState = 'READ_PHONE_STATE', // Android only
   CallPhone = 'CALL_PHONE', // Android only
 }
 
