@@ -102,7 +102,12 @@ class RNTwilioPhone {
         return;
       }
 
-      RNCallKeep.backToForeground();
+      RNCallKeep.registerPhoneAccount();
+      RNCallKeep.registerAndroidEvents();
+      RNCallKeep.setAvailable(true);
+
+      RNTwilioPhone.listenTwilioPhone();
+      RNTwilioPhone.listenCallKeep();
 
       TwilioPhone.handleMessage(remoteMessage.data);
     });
@@ -187,6 +192,8 @@ class RNTwilioPhone {
   }
 
   private static listenTwilioPhone() {
+    RNTwilioPhone.removeTwilioPhoneListeners();
+
     const subscriptions = [
       twilioPhoneEmitter.addListener(
         EventType.CallInvite,
@@ -270,6 +277,8 @@ class RNTwilioPhone {
   }
 
   private static listenCallKeep() {
+    RNTwilioPhone.removeCallKeepListeners();
+
     if (Platform.OS === 'ios') {
       RNCallKeep.addEventListener(
         'didDisplayIncomingCall',
@@ -344,20 +353,33 @@ class RNTwilioPhone {
     );
 
     return () => {
-      if (Platform.OS === 'ios') {
-        RNCallKeep.removeEventListener('didDisplayIncomingCall');
-        RNCallKeep.removeEventListener('didResetProvider');
-        RNCallKeep.removeEventListener('didActivateAudioSession');
-        RNCallKeep.removeEventListener('didDeactivateAudioSession');
-      }
-
-      RNCallKeep.removeEventListener('didReceiveStartCallAction');
-      RNCallKeep.removeEventListener('answerCall');
-      RNCallKeep.removeEventListener('endCall');
-      RNCallKeep.removeEventListener('didPerformSetMutedCallAction');
-      RNCallKeep.removeEventListener('didToggleHoldCallAction');
-      RNCallKeep.removeEventListener('didPerformDTMFAction');
+      RNTwilioPhone.removeCallKeepListeners();
     };
+  }
+
+  private static removeTwilioPhoneListeners() {
+    twilioPhoneEmitter.removeAllListeners(EventType.CallInvite);
+    twilioPhoneEmitter.removeAllListeners(EventType.CancelledCallInvite);
+    twilioPhoneEmitter.removeAllListeners(EventType.CallRinging);
+    twilioPhoneEmitter.removeAllListeners(EventType.CallConnected);
+    twilioPhoneEmitter.removeAllListeners(EventType.CallDisconnected);
+    twilioPhoneEmitter.removeAllListeners(EventType.CallDisconnectedError);
+  }
+
+  private static removeCallKeepListeners() {
+    if (Platform.OS === 'ios') {
+      RNCallKeep.removeEventListener('didDisplayIncomingCall');
+      RNCallKeep.removeEventListener('didResetProvider');
+      RNCallKeep.removeEventListener('didActivateAudioSession');
+      RNCallKeep.removeEventListener('didDeactivateAudioSession');
+    }
+
+    RNCallKeep.removeEventListener('didReceiveStartCallAction');
+    RNCallKeep.removeEventListener('answerCall');
+    RNCallKeep.removeEventListener('endCall');
+    RNCallKeep.removeEventListener('didPerformSetMutedCallAction');
+    RNCallKeep.removeEventListener('didToggleHoldCallAction');
+    RNCallKeep.removeEventListener('didPerformDTMFAction');
   }
 
   private static async registerTwilioPhone(deviceToken: string) {
