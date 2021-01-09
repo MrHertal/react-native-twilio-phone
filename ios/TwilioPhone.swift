@@ -46,7 +46,7 @@ class TwilioPhone: RCTEventEmitter {
         
         let tokenData = hexToData(str: deviceToken)
         
-        TwilioVoice.register(accessToken: accessToken, deviceToken: tokenData) { error in
+        TwilioVoiceSDK.register(accessToken: accessToken, deviceToken: tokenData) { error in
             if let error = error {
                 NSLog("[TwilioPhone] An error occurred while registering: \(error.localizedDescription)")
                 
@@ -67,7 +67,7 @@ class TwilioPhone: RCTEventEmitter {
     func handleMessage(payload: [String: String]) {
         NSLog("[TwilioPhone] Handling message")
         
-        TwilioVoice.handleNotification(payload, delegate: self, delegateQueue: nil)
+        TwilioVoiceSDK.handleNotification(payload, delegate: self, delegateQueue: nil)
     }
     
     @objc(acceptCallInvite:)
@@ -166,7 +166,7 @@ class TwilioPhone: RCTEventEmitter {
             builder.params = params
         }
         
-        let call = TwilioVoice.connect(options: connectOptions, delegate: self)
+        let call = TwilioVoiceSDK.connect(options: connectOptions, delegate: self)
         
         activeCall = call
     }
@@ -177,7 +177,7 @@ class TwilioPhone: RCTEventEmitter {
         
         let tokenData = hexToData(str: deviceToken)
         
-        TwilioVoice.unregister(accessToken: accessToken, deviceToken: tokenData) { error in
+        TwilioVoiceSDK.unregister(accessToken: accessToken, deviceToken: tokenData) { error in
             if let error = error {
                 NSLog("[TwilioPhone] An error occurred while unregistering: \(error.localizedDescription)")
                 
