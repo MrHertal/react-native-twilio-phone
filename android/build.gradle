@@ -128,5 +128,5 @@ dependencies {
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-  implementation 'com.twilio:voice-android:5.6.0'
+  implementation 'com.twilio:voice-android:5.6.1'
 }
