@@ -170,8 +170,6 @@ class RNTwilioPhone {
       return () => {};
     }
 
-    VoipPushNotification.registerVoipToken();
-
     VoipPushNotification.addEventListener(
       'register',
       RNTwilioPhone.registerTwilioPhone
@@ -184,6 +182,8 @@ class RNTwilioPhone {
         TwilioPhone.handleMessage(notification);
       }
     );
+
+    VoipPushNotification.registerVoipToken();
 
     return () => {
       VoipPushNotification.removeEventListener('register');
