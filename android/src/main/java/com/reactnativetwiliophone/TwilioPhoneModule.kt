@@ -1,6 +1,8 @@
 package com.reactnativetwiliophone
 
+import android.content.Context
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -18,6 +20,8 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) : ReactContextBas
   private var activeCalls = mutableMapOf<String, Call>()
 
   private var callListener = callListener()
+
+  private var audioManager: AudioManager = reactContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager;
 
   override fun getName(): String {
     return "TwilioPhone"
@@ -163,6 +167,12 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) : ReactContextBas
     val activeCall = activeCalls[callSid] ?: return
 
     activeCall.hold(hold)
+  }
+
+  @ReactMethod
+  fun toggleSpeaker(speakerOn: Boolean) {
+    Log.i(tag, "Toggling speaker")
+    audioManager.setSpeakerphoneOn(speakerOn);
   }
 
   @ReactMethod
