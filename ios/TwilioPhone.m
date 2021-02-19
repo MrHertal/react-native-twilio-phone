@@ -19,6 +19,8 @@ RCT_EXTERN_METHOD(toggleMuteCall:(NSString *)callSid withMute:(BOOL *)mute)
 
 RCT_EXTERN_METHOD(toggleHoldCall:(NSString *)callSid withHold:(BOOL *)hold)
 
+RCT_EXTERN_METHOD(toggleSpeaker:(BOOL *)speakerOn)
+
 RCT_EXTERN_METHOD(sendDigits:(NSString *)callSid withDigits:(NSString *)digits)
 
 RCT_EXTERN_METHOD(startCall:(NSString *)accessToken withParams:(NSDictionary *)params)
