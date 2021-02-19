@@ -27,6 +27,7 @@ type TwilioPhoneType = {
   endCall(callSid: string): void;
   toggleMuteCall(callSid: string, mute: boolean): void;
   toggleHoldCall(callSid: string, hold: boolean): void;
+  toggleSpeaker(speakerOn: boolean): void;
   sendDigits(callSid: string, digits: string): void;
   startCall(accessToken: string, params: ConnectParams): void;
   unregister(accessToken: string, deviceToken: string): void;
