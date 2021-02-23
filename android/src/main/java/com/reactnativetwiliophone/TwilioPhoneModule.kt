@@ -21,7 +21,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) : ReactContextBas
 
   private var callListener = callListener()
 
-  private var audioManager: AudioManager = reactContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager;
+  private var audioManager: AudioManager = reactContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
   override fun getName(): String {
     return "TwilioPhone"
@@ -172,7 +172,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) : ReactContextBas
   @ReactMethod
   fun toggleSpeaker(speakerOn: Boolean) {
     Log.i(tag, "Toggling speaker")
-    audioManager.setSpeakerphoneOn(speakerOn);
+    audioManager.isSpeakerphoneOn = speakerOn
   }
 
   @ReactMethod
