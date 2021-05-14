@@ -9,10 +9,10 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "@react-native-firebase/app": "^10.8.1",
-    "@react-native-firebase/messaging": "^10.8.1",
-    "react": "16.13.1",
-    "react-native": "0.63.4",
+    "@react-native-firebase/app": "^11.5.0",
+    "@react-native-firebase/messaging": "^11.5.0",
+    "react": "17.0.1",
+    "react-native": "0.64.1",
     "react-native-callkeep": "^4.0.1",
     "react-native-voip-push-notification": "^3.1.0"
   },
