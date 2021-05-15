@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderBottomWidth: 1,
     marginBottom: 40,
-    color: 'black',
+    color: 'gray',
     textAlign: 'center',
   },
   unregister: {
