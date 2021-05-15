@@ -85,9 +85,9 @@ The following modifications must be made on `AppDelegate.m` in order to handle T
 
 ### Twilio server-side web application
 
-Follow the Twilio Voice [iOS SDK Quickstart](https://www.twilio.com/docs/api/voice-sdk/ios/getting-started) and [Android SDK Quickstart](https://www.twilio.com/docs/api/voice-sdk/android/getting-started).
+Follow the Twilio Voice [iOS SDK Quickstart](https://www.twilio.com/docs/api/voice-sdk/ios/getting-started) and [Android SDK Quickstart](https://www.twilio.com/docs/api/voice-sdk/android/getting-started), in order to prepare your Twilio environment.
 
-Steps 1 and 6 must be skipped.
+There are two options for configuring a server application. The new option is to deploy to Twilio Serverless the server application included in the two quickstart projects. The old option is to run one of the starter project such as [voice-quickstart-server-node](https://github.com/twilio/voice-quickstart-server-node).
 
 ## Installation
 
@@ -105,7 +105,7 @@ Run this command to complete installation on iOS:
 cd ios/ && pod install
 ```
 
-You must also create a Swift file like [this one](https://github.com/MrHertal/react-native-twilio-phone/blob/master/example/ios/File.swift) in the `/ios` folder. If you don't have such a file, your app won't build.
+You must also create a Swift file like [this one](https://github.com/MrHertal/react-native-twilio-phone/blob/master/example/ios/File.swift) in the `/ios` folder. If you don't have such a file, your app may not build.
 
 ## Usage
 
