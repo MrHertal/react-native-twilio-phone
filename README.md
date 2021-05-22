@@ -38,6 +38,8 @@ iOS call to Android:
 
 Before setting up this module, you need to install the 3 dependencies listed above in your app. Then you have to configure a server that generates an access token used by Twilio.
 
+For better compatibility, use the same versions of these libraries as in the [example app](https://github.com/MrHertal/react-native-twilio-phone/blob/master/example/package.json).
+
 ### React Native CallKeep
 
 Install [React Native CallKeep](https://github.com/react-native-webrtc/react-native-callkeep) and follow their instructions for [iOS](https://github.com/react-native-webrtc/react-native-callkeep/blob/master/docs/ios-installation.md) and [Android](https://github.com/react-native-webrtc/react-native-callkeep/blob/master/docs/android-installation.md).
