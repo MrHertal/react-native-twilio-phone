@@ -91,6 +91,8 @@ Follow the Twilio Voice [iOS SDK Quickstart](https://www.twilio.com/docs/api/voi
 
 There are two options for configuring a server application. The new option is to deploy to Twilio Serverless the server application included in the two quickstart projects. The old option is to run one of the starter project such as [voice-quickstart-server-node](https://github.com/twilio/voice-quickstart-server-node).
 
+I did not test the new option yet.
+
 ## Installation
 
 Now come the easy part :)
@@ -320,6 +322,8 @@ TwilioPhone.checkPermissions((permissions) => {
 ## Example app
 
 To start the example app, first set up [Twilio server-side web application](#Twilio-server-side-web-application).
+
+In order to improve the example app, I applied some changes to [voice-quickstart-server-node](https://github.com/twilio/voice-quickstart-server-node). You can check those changes [here](https://github.com/MrHertal/voice-quickstart-server-node/commit/03a07757f8973e03efa788e2342eaa9b7e1ebff5).
 
 Then run `yarn bootstrap` in the root directory to install the required dependencies for each package:
 
