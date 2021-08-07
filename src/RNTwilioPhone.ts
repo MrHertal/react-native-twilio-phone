@@ -113,7 +113,12 @@ class RNTwilioPhone {
     });
   }
 
-  static async startCall(to: string, calleeName?: string, from?: string) {
+  static async startCall(
+    to: string,
+    calleeName?: string,
+    from?: string,
+    additionalParams: ConnectParams = {}
+  ) {
     const accessToken = await RNTwilioPhone.fetchAccessToken();
     const params: ConnectParams = { to };
 
@@ -121,7 +126,10 @@ class RNTwilioPhone {
       params.from = from;
     }
 
-    TwilioPhone.startCall(accessToken, params);
+    TwilioPhone.startCall(accessToken, {
+      ...params,
+      ...additionalParams,
+    });
 
     const uuid = ramdomUuid().toLowerCase();
     RNTwilioPhone.activeCall = { uuid: null, sid: null };
