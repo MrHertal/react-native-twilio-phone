@@ -1,6 +1,6 @@
 {
   "name": "react-native-twilio-phone",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Twilio Voice React Native module.",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
