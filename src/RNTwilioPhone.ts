@@ -17,6 +17,7 @@ export type RNTwilioPhoneOptions = {
 type Call = {
   uuid: string | null;
   sid: string | null;
+  payload: object | null;
 };
 
 const defaultOptions: RNTwilioPhoneOptions = {
@@ -132,7 +133,7 @@ class RNTwilioPhone {
     });
 
     const uuid = ramdomUuid().toLowerCase();
-    RNTwilioPhone.activeCall = { uuid: null, sid: null };
+    RNTwilioPhone.activeCall = { uuid: null, sid: null, payload: null };
 
     RNCallKeep.startCall(uuid, to, calleeName, 'generic');
   }
@@ -209,7 +210,7 @@ class RNTwilioPhone {
           // Incoming call is already reported to CallKit on iOS
           if (Platform.OS === 'android') {
             const uuid = ramdomUuid().toLowerCase();
-            RNTwilioPhone.addCall({ uuid, sid: callSid });
+            RNTwilioPhone.addCall({ uuid, sid: callSid, payload: null });
 
             RNCallKeep.displayIncomingCall(uuid, from);
           }
@@ -291,7 +292,8 @@ class RNTwilioPhone {
       RNCallKeep.addEventListener(
         'didDisplayIncomingCall',
         ({ callUUID, payload }) => {
-          RNTwilioPhone.addCall({ uuid: callUUID, sid: payload.twi_call_sid });
+          const { aps, ...sanitizedPayload } = payload;
+          RNTwilioPhone.addCall({ uuid: callUUID, sid: sanitizedPayload.twi_call_sid, payload: sanitizedPayload });
         }
       );
 
