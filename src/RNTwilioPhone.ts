@@ -292,8 +292,13 @@ class RNTwilioPhone {
       RNCallKeep.addEventListener(
         'didDisplayIncomingCall',
         ({ callUUID, payload }) => {
-          const { aps, ...sanitizedPayload } = payload;
-          RNTwilioPhone.addCall({ uuid: callUUID, sid: sanitizedPayload.twi_call_sid, payload: sanitizedPayload });
+          delete payload.aps;
+
+          RNTwilioPhone.addCall({
+            uuid: callUUID,
+            sid: payload.twi_call_sid,
+            payload,
+          });
         }
       );
 
