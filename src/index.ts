@@ -14,7 +14,7 @@ export enum PermissionStatus {
   Unknown = 'UNKNOWN',
 }
 
-export type MessagePayload = Record<string, string>;
+export type MessagePayload = Record<string, any>;
 export type ConnectParams = Record<string, string>;
 export type Permissions = Record<PermissionName, PermissionStatus>;
 

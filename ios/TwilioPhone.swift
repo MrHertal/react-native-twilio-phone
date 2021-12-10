@@ -64,7 +64,7 @@ class TwilioPhone: RCTEventEmitter {
     }
     
     @objc(handleMessage:)
-    func handleMessage(payload: [String: String]) {
+    func handleMessage(payload: [AnyHashable: Any]) {
         NSLog("[TwilioPhone] Handling message")
         
         TwilioVoiceSDK.handleNotification(payload, delegate: self, delegateQueue: nil)

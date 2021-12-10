@@ -3,7 +3,6 @@ package com.reactnativetwiliophone
 import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioManager
-import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -59,10 +58,11 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
   fun handleMessage(payload: ReadableMap) {
     Log.i(tag, "Handling message")
 
-    val data = Bundle()
+    val data = Arguments.toBundle(payload)
 
-    for (entry in payload.entryIterator) {
-      data.putString(entry.key, entry.value as String)
+    if (data == null) {
+      Log.e(tag, "The message was not a valid Twilio Voice SDK payload")
+      return
     }
 
     val valid = Voice.handleMessage(reactApplicationContext, data, object : MessageListener {
