@@ -38,6 +38,8 @@ const CK_CONSTANTS = {
 class RNTwilioPhone {
   static calls: Call[] = [];
 
+  // save callKeepOptions for android platform
+  static callKeepOptions: IOptions
   private static fetchAccessToken: () => Promise<string>;
   private static deviceToken: string | null = null;
   private static activeCall: Call | null = null;
@@ -47,6 +49,8 @@ class RNTwilioPhone {
     fetchAccessToken: () => Promise<string>,
     options = defaultOptions
   ) {
+    // set callKeepOptions for android
+    RNTwilioPhone.callKeepOptions = callKeepOptions;
     const unsubscribeCallKeep = RNTwilioPhone.initializeCallKeep(
       callKeepOptions,
       fetchAccessToken,
@@ -79,7 +83,8 @@ class RNTwilioPhone {
         })
         .catch((e) => console.log(e));
     } else {
-      RNCallKeep.registerPhoneAccount();
+      // pass callKeepOptions
+      RNCallKeep.registerPhoneAccount(callKeepOptions);
       RNCallKeep.registerAndroidEvents();
       RNCallKeep.setAvailable(true);
     }
@@ -103,7 +108,8 @@ class RNTwilioPhone {
         return;
       }
 
-      RNCallKeep.registerPhoneAccount();
+      // pass android callKeepOptions
+      RNCallKeep.registerPhoneAccount(RNTwilioPhone.callKeepOptions);
       RNCallKeep.registerAndroidEvents();
       RNCallKeep.setAvailable(true);
 
