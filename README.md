@@ -16,7 +16,7 @@ It is built on top of 3 modules:
 Supported versions:
 
 - iOS 11+
-- Android API 23+
+- Android API 30+
 
 ## Example
 

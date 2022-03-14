@@ -18,5 +18,5 @@ Pod::Spec.new do |s|
   
 
   s.dependency "React"
-  s.dependency "TwilioVoice", "~> 6.2"
+  s.dependency "TwilioVoice", "~> 6.3"
 end
