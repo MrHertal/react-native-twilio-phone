@@ -79,7 +79,7 @@ class RNTwilioPhone {
         })
         .catch((e) => console.log(e));
     } else {
-      RNCallKeep.registerPhoneAccount();
+      RNCallKeep.registerPhoneAccount(callKeepOptions);
       RNCallKeep.registerAndroidEvents();
       RNCallKeep.setAvailable(true);
     }
@@ -93,7 +93,7 @@ class RNTwilioPhone {
     };
   }
 
-  static handleBackgroundState() {
+  static handleBackgroundState(callKeepOptions: IOptions) {
     if (Platform.OS !== 'android') {
       return;
     }
@@ -103,7 +103,7 @@ class RNTwilioPhone {
         return;
       }
 
-      RNCallKeep.registerPhoneAccount();
+      RNCallKeep.registerPhoneAccount(callKeepOptions);
       RNCallKeep.registerAndroidEvents();
       RNCallKeep.setAvailable(true);
 

@@ -10,6 +10,7 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.twilio.voice.*
 
+
 class TwilioPhoneModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
@@ -267,6 +268,16 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
     permissions.putString("CALL_PHONE", callPhone)
 
     callback(permissions)
+  }
+
+  @ReactMethod
+  fun addListener(eventName: String?) {
+    // Set up any upstream listeners or background tasks as necessary
+  }
+
+  @ReactMethod
+  fun removeListeners(count: Int?) {
+    // Remove upstream listeners, stop unnecessary background tasks
   }
 
   private fun sendEvent(

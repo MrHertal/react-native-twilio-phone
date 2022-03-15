@@ -9,17 +9,17 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "@react-native-firebase/app": "^11.5.0",
-    "@react-native-firebase/messaging": "^11.5.0",
-    "react": "17.0.1",
-    "react-native": "0.64.1",
-    "react-native-callkeep": "^4.0.1",
-    "react-native-voip-push-notification": "^3.1.0"
+    "@react-native-firebase/app": "^14.5.1",
+    "@react-native-firebase/messaging": "^14.5.1",
+    "react": "17.0.2",
+    "react-native": "0.67.3",
+    "react-native-callkeep": "^4.3.2",
+    "react-native-voip-push-notification": "^3.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@babel/runtime": "^7.9.6",
     "babel-plugin-module-resolver": "^4.0.0",
-    "metro-react-native-babel-preset": "^0.59.0"
+    "metro-react-native-babel-preset": "^0.66.2"
   }
 }
