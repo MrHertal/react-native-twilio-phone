@@ -15,6 +15,8 @@ RCT_EXTERN_METHOD(disconnectCall:(NSString *)callSid)
 
 RCT_EXTERN_METHOD(endCall:(NSString *)callSid)
 
+RCT_EXTERN_METHOD(getCallStats:(NSString *)callSid resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(toggleMuteCall:(NSString *)callSid withMute:(BOOL *)mute)
 
 RCT_EXTERN_METHOD(toggleHoldCall:(NSString *)callSid withHold:(BOOL *)hold)
