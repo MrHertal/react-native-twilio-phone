@@ -128,15 +128,15 @@ class TwilioPhone: RCTEventEmitter {
     @objc(getCallStats:resolver:rejecter:)
     func getCallStats(callSid: String, resolve: @escaping RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         NSLog("[TwilioPhone] Getting stats for %@", callSid)
-
+        
         guard let activeCall = activeCalls[callSid] else {
             resolve(nil)
             return
         }
-
+        
         activeCall.getStats { stats in
             NSLog("[TwilioPhone] Stats: %@", stats)
-
+            
             resolve(stats.map({ report in
                 return report.toJSON()
             }))

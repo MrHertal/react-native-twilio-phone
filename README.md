@@ -304,6 +304,7 @@ type TwilioPhoneType = {
   rejectCallInvite(callSid: string): void;
   disconnectCall(callSid: string): void;
   endCall(callSid: string): void;
+  getCallStats(callSid: string): Promise<CallStats>; // iOS only
   toggleMuteCall(callSid: string, mute: boolean): void;
   toggleHoldCall(callSid: string, hold: boolean): void;
   toggleSpeaker(speakerOn: boolean): void;
