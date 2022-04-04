@@ -125,6 +125,24 @@ class TwilioPhone: RCTEventEmitter {
         }
     }
     
+    @objc(getCallStats:resolver:rejecter:)
+    func getCallStats(callSid: String, resolve: @escaping RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+        NSLog("[TwilioPhone] Getting stats for %@", callSid)
+
+        guard let activeCall = activeCalls[callSid] else {
+            resolve(nil)
+            return
+        }
+
+        activeCall.getStats { stats in
+            NSLog("[TwilioPhone] Stats: %@", stats)
+
+            resolve(stats.map({ report in
+                return report.toJSON()
+            }))
+        }
+    }
+    
     @objc(toggleMuteCall:withMute:)
     func toggleMuteCall(callSid: String, mute: Bool) {
         NSLog("[TwilioPhone] Toggling mute call")
@@ -394,5 +412,28 @@ extension TwilioPhone: NotificationDelegate {
         if hasListeners {
             sendEvent(withName: "CancelledCallInvite", body: ["callSid": cancelledCallInvite.callSid])
         }
+    }
+}
+
+// MARK: - TVOStatsReport JSON serialization
+
+extension StatsReport {
+    public func toJSON() -> NSDictionary {
+        return [
+            "localAudioTrackStats": localAudioTrackStats.map({ trackStats in
+                return [
+                    "audioLevel": trackStats.audioLevel,
+                    "jitter": trackStats.jitter,
+                    "roundTripTime": trackStats.roundTripTime,
+                ]
+            }),
+            "remoteAudioTrackStats": remoteAudioTrackStats.map({ trackStats in
+                return [
+                    "audioLevel": trackStats.audioLevel,
+                    "jitter": trackStats.jitter,
+                    "mos": trackStats.mos
+                ]
+            }),
+        ]
     }
 }

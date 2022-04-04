@@ -17,6 +17,18 @@ export enum PermissionStatus {
 export type MessagePayload = Record<string, any>;
 export type ConnectParams = Record<string, string>;
 export type Permissions = Record<PermissionName, PermissionStatus>;
+export type CallStats = {
+  localAudioTrackStats: Array<{
+    audioLevel: number,
+    jitter: number,
+    roundTripTime: number,
+  }>,
+  remoteAudioTrackStats: Array<{
+    audioLevel: number,
+    jitter: number,
+    mos: number
+  }>
+}
 
 type TwilioPhoneType = {
   register(accessToken: string, deviceToken: string): void;
@@ -25,6 +37,7 @@ type TwilioPhoneType = {
   rejectCallInvite(callSid: string): void;
   disconnectCall(callSid: string): void;
   endCall(callSid: string): void;
+  getCallStats(callSid: string): Promise<CallStats>;
   toggleMuteCall(callSid: string, mute: boolean): void;
   toggleHoldCall(callSid: string, hold: boolean): void;
   toggleSpeaker(speakerOn: boolean): void;
