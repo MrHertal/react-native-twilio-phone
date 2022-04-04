@@ -19,16 +19,16 @@ export type ConnectParams = Record<string, string>;
 export type Permissions = Record<PermissionName, PermissionStatus>;
 export type CallStats = {
   localAudioTrackStats: Array<{
-    audioLevel: number,
-    jitter: number,
-    roundTripTime: number,
-  }>,
+    audioLevel: number;
+    jitter: number;
+    roundTripTime: number;
+  }>;
   remoteAudioTrackStats: Array<{
-    audioLevel: number,
-    jitter: number,
-    mos: number
-  }>
-}
+    audioLevel: number;
+    jitter: number;
+    mos: number;
+  }>;
+};
 
 type TwilioPhoneType = {
   register(accessToken: string, deviceToken: string): void;
