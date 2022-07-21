@@ -1,4 +1,3 @@
-import messaging from '@react-native-firebase/messaging';
 import { Platform } from 'react-native';
 import RNCallKeep, { IOptions } from 'react-native-callkeep';
 import {
@@ -9,6 +8,11 @@ import {
 } from 'react-native-twilio-phone';
 import VoipPushNotification from 'react-native-voip-push-notification';
 import ramdomUuid from 'uuid-random';
+
+let messaging
+if (Platform.OS === 'android') {
+  messaging = require('@react-native-firebase/messaging')
+}
 
 export type RNTwilioPhoneOptions = {
   requestPermissionsOnInit: boolean; // Default: true
