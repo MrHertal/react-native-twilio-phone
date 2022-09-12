@@ -8,7 +8,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
+import com.reactnativetwiliophone.utils.NotificationUtils
 import com.twilio.voice.*
+import java.util.*
 
 
 class TwilioPhoneModule(reactContext: ReactApplicationContext) :
@@ -65,19 +67,24 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
       Log.e(tag, "The message was not a valid Twilio Voice SDK payload")
       return
     }
-
+    val notificationId = 58764854
     val valid = Voice.handleMessage(reactApplicationContext, data, object : MessageListener {
       override fun onCallInvite(callInvite: CallInvite) {
         Log.d(tag, "Call invite received")
-
         activeCallInvites[callInvite.callSid] = callInvite
 
         val from = callInvite.from ?: ""
-
+        val caller = from.replace("client:", "")
         val params = Arguments.createMap()
         params.putString("callSid", callInvite.callSid)
-        params.putString("from", from.replace("client:", ""))
-
+        params.putString("from", caller)
+        val pushData = Arguments.createMap()
+        pushData.putString("callerName", caller)
+        pushData.putString("callSid", callInvite.callSid)
+        currentActivity?.let {
+          NotificationUtils.showCallNotification(reactApplicationContext, pushData,
+            it, notificationId)
+        }
         sendEvent(reactApplicationContext, "CallInvite", params)
       }
 
@@ -88,10 +95,9 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         Log.d(tag, "Cancelled call invite received")
 
         activeCallInvites.remove(cancelledCallInvite.callSid)
-
         val params = Arguments.createMap()
         params.putString("callSid", cancelledCallInvite.callSid)
-
+        NotificationUtils.cancelPushNotification(reactApplicationContext, notificationId)
         sendEvent(reactApplicationContext, "CancelledCallInvite", params)
       }
     })

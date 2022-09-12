@@ -247,7 +247,7 @@ class TwilioPhone: RCTEventEmitter {
     }
     
     @objc(checkPermissions:)
-    func checkPermissions(callback: RCTResponseSenderBlock) {
+    func checkPermissions(callback:@escaping RCTResponseSenderBlock) {
         NSLog("[TwilioPhone] Checking permissions")
         
         var permissions: [String: String] = [:]
@@ -264,7 +264,10 @@ class TwilioPhone: RCTEventEmitter {
             
             AVAudioSession.sharedInstance().requestRecordPermission { granted in
                 NSLog("[TwilioPhone] Record permission granted: \(granted)")
+                permissions["RECORD"] = granted ? "GRANTED": "DENIED"
+                callback([permissions]);
             }
+            return;
         default:
             permissions["RECORD"] = "UNKNOWN"
         }
