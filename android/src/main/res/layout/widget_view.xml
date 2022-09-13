@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="wrap_content"
+  android:background="@color/incall_call_state_label_background"
+
+  android:layout_height="wrap_content">
+
+<!--Root container-->
+
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/root_container"
+    android:orientation="vertical">
+    <!--  <TextView
+        android:id="@+id/callType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="34dp"
+        android:textColor="@color/incall_call_banner_text_color"
+        android:textSize="24sp"
+        android:padding="8dp"
+        android:text="Incoming Call"
+        android:textAlignment="center" />-->
+
+    <ImageView
+      android:id="@+id/photo"
+      android:layout_width="96dp"
+      android:layout_height="96dp"
+      android:layout_centerInParent="true"
+      android:src="@drawable/logo_round" />
+
+    <TextView
+      android:id="@id/callerName"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_below="@+id/photo"
+      android:padding="5dp"
+      android:textColor="@color/incall_call_banner_text_color"
+      android:textSize="18sp" />
+
+    <ImageView
+      android:id="@id/imgDecline"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_alignParentStart="true"
+      android:layout_alignParentBottom="true"
+      android:layout_margin="32dp"
+      android:layout_marginBottom="60dp"
+      android:src="@drawable/ic_end_call_icon" />
+
+    <ImageView
+      android:id="@id/imgAnswer"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentBottom="true"
+      android:layout_margin="32dp"
+      android:layout_marginBottom="60dp"
+      android:src="@drawable/ic_accept_call_icon" />
+
+
+  </RelativeLayout>
+
+</FrameLayout>

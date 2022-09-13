@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="widgetDes">call widget</string>
+    <string name="widgetContentDesc">content call widget</string>
+  <string name="permission_floating_window">Permissions required to hover above the app</string>
+</resources>

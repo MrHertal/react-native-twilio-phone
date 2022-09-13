@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.reactnativetwiliophone">
-
+  xmlns:tools="http://schemas.android.com/tools"
+  package="com.reactnativetwiliophone"
+  >
+  <application tools:node="merge" />
 </manifest>

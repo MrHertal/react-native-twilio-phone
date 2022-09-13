@@ -109,7 +109,7 @@ class RNTwilioPhone {
 
       RNTwilioPhone.listenTwilioPhone();
       RNTwilioPhone.listenCallKeep();
-
+       console.warn('handleBackgroundState', remoteMessage.data);
       TwilioPhone.handleMessage(remoteMessage.data);
     });
   }

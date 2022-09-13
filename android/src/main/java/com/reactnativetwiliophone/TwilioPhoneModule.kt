@@ -10,14 +10,13 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.reactnativetwiliophone.utils.NotificationUtils
 import com.twilio.voice.*
-import java.util.*
 
 
 class TwilioPhoneModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
   private val tag = "TwilioPhone"
-
+  private val notificationId = 58764854
   private var activeCallInvites = mutableMapOf<String, CallInvite>()
   private var activeCalls = mutableMapOf<String, Call>()
 
@@ -58,6 +57,12 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
+  fun showCallNotification(payload: ReadableMap) {
+//    currentActivity?.let { ViewUtils.showCallView(reactApplicationContext, payload, it) };
+    NotificationUtils.showCallNotification(reactApplicationContext, payload, notificationId)
+  }
+
+  @ReactMethod
   fun handleMessage(payload: ReadableMap) {
     Log.i(tag, "Handling message")
 
@@ -67,7 +72,6 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
       Log.e(tag, "The message was not a valid Twilio Voice SDK payload")
       return
     }
-    val notificationId = 58764854
     val valid = Voice.handleMessage(reactApplicationContext, data, object : MessageListener {
       override fun onCallInvite(callInvite: CallInvite) {
         Log.d(tag, "Call invite received")
@@ -81,10 +85,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         val pushData = Arguments.createMap()
         pushData.putString("callerName", caller)
         pushData.putString("callSid", callInvite.callSid)
-        currentActivity?.let {
-          NotificationUtils.showCallNotification(reactApplicationContext, pushData,
-            it, notificationId)
-        }
+        NotificationUtils.showCallNotification(reactApplicationContext, pushData, notificationId)
         sendEvent(reactApplicationContext, "CallInvite", params)
       }
 

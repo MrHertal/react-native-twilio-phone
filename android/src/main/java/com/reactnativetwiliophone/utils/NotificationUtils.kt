@@ -13,7 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import java.util.*
-
+import com.reactnativetwiliophone.R
 
 object NotificationUtils {
     const val EXTRA_NOTIFICATION = "com.reactnativetwiliophone.EXTRA_NOTIFICATION"
@@ -48,25 +48,26 @@ object NotificationUtils {
     return getBroadcast(context, requestCode, clickIntentData, FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
   }
 
-  fun showCallNotification(context: Context, notificationData: ReadableMap, activity: Activity, notificationId: Int) {
+  fun showCallNotification(context: Context, notificationData: ReadableMap, notificationId: Int) {
     val notificationManager = NotificationManagerCompat.from(context)
     val notificationDataBundle = Arguments.toBundle(notificationData)
+    val activityClass = context.packageName+".MainActivity"
     val answerIntent = notificationDataBundle?.let {
       createNotificationIntent(context,
-        it,"answer", notificationId, activity.componentName.className)
+        it,"answer", notificationId, activityClass)
     }
     val rejectIntent = notificationDataBundle?.let {
       createNotificationIntent(context,
-        it,"reject", notificationId, activity.componentName.className)
+        it,"reject", notificationId, activityClass)
     }
     val bodyIntent = notificationDataBundle?.let {
       createNotificationIntent(context,
-        it,"tabbed", notificationId, activity.componentName.className)
+        it,"tabbed", notificationId, activityClass)
     }
     createCallChannel(notificationManager)
     val channelId = INCOMING_CALL_CHANNEL_ID;
     val callerName = notificationDataBundle?.getString("callerName", "")
-    val notificationIcon: Int = context.resources.getIdentifier("ic_notify", "drawable", context.packageName)
+    val notificationIcon: Int = R.drawable.logo_round
     val notificationBuilder: NotificationCompat.Builder =
       NotificationCompat.Builder(context, channelId)
         .setSmallIcon(notificationIcon)
@@ -78,15 +79,10 @@ object NotificationUtils {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
       notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
     }
-    val layoutId = context.resources.getIdentifier("notification_custom", "layout", context.packageName)
-    val answerButton = context.resources.getIdentifier("btnAnswer", "id", context.packageName)
-    val rejectButton = context.resources.getIdentifier("btnDecline", "id", context.packageName)
-    val callerNamePlaceHolder = context.resources.getIdentifier("callerName", "id", context.packageName)
-    val remoteView = RemoteViews(context.packageName, layoutId)
-
-    remoteView.setOnClickPendingIntent(answerButton, answerIntent)
-    remoteView.setOnClickPendingIntent(rejectButton, rejectIntent)
-    remoteView.setTextViewText(callerNamePlaceHolder, callerName)
+    val remoteView = RemoteViews(context.packageName, R.layout.notification_custom)
+    remoteView.setOnClickPendingIntent(R.id.imgAnswer, answerIntent)
+    remoteView.setOnClickPendingIntent(R.id.imgDecline, rejectIntent)
+    remoteView.setTextViewText(R.id.callerName, callerName);
 
     notificationBuilder.setCustomContentView(remoteView)
     notificationBuilder.setFullScreenIntent(bodyIntent, true)
