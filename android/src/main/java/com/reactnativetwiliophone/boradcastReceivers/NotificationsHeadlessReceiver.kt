@@ -1,4 +1,4 @@
-package com.reactnativetwiliophone.utils
+package com.reactnativetwiliophone.boradcastReceivers
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,7 @@ import com.facebook.react.HeadlessJsTaskService
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.jstasks.HeadlessJsTaskConfig
+import com.reactnativetwiliophone.Const
 
 class NotificationsHeadlessReceiver : HeadlessJsTaskService() {
     @Nullable
@@ -14,7 +15,7 @@ class NotificationsHeadlessReceiver : HeadlessJsTaskService() {
         val extras: Bundle? = intent.extras
         if (extras != null) {
             val notification =
-                    intent.getBundleExtra(NotificationUtils.EXTRA_NOTIFICATION)
+                    intent.getBundleExtra(Const.EXTRA_NOTIFIER)
             val notificationMap: WritableMap = Arguments.fromBundle(notification)
             notification?.let {
                 return HeadlessJsTaskConfig(

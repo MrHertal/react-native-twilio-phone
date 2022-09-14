@@ -8,7 +8,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
+import com.reactnativetwiliophone.Const.NOTIFICATION_ID
 import com.reactnativetwiliophone.utils.NotificationUtils
+import com.reactnativetwiliophone.utils.ViewUtils
 import com.twilio.voice.*
 
 
@@ -16,10 +18,8 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
   private val tag = "TwilioPhone"
-  private val notificationId = 58764854
   private var activeCallInvites = mutableMapOf<String, CallInvite>()
   private var activeCalls = mutableMapOf<String, Call>()
-
   private var callListener = callListener()
 
   private var audioManager: AudioManager =
@@ -58,8 +58,8 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun showCallNotification(payload: ReadableMap) {
-//    currentActivity?.let { ViewUtils.showCallView(reactApplicationContext, payload, it) };
-    NotificationUtils.showCallNotification(reactApplicationContext, payload, notificationId)
+     ViewUtils.showCallView(reactApplicationContext, payload);
+  //  NotificationUtils.showCallNotification(reactApplicationContext, payload, notificationId)
   }
 
   @ReactMethod
@@ -85,7 +85,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         val pushData = Arguments.createMap()
         pushData.putString("callerName", caller)
         pushData.putString("callSid", callInvite.callSid)
-        NotificationUtils.showCallNotification(reactApplicationContext, pushData, notificationId)
+        NotificationUtils.showCallNotification(reactApplicationContext, pushData, NOTIFICATION_ID)
         sendEvent(reactApplicationContext, "CallInvite", params)
       }
 
@@ -98,7 +98,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         activeCallInvites.remove(cancelledCallInvite.callSid)
         val params = Arguments.createMap()
         params.putString("callSid", cancelledCallInvite.callSid)
-        NotificationUtils.cancelPushNotification(reactApplicationContext, notificationId)
+        NotificationUtils.cancelPushNotification(reactApplicationContext, NOTIFICATION_ID)
         sendEvent(reactApplicationContext, "CancelledCallInvite", params)
       }
     })
@@ -259,7 +259,10 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
     if (callPhone != "GRANTED") {
       permissionsToRequest.add(android.Manifest.permission.CALL_PHONE)
     }
-
+    val overlayWindow = checkPermission(Const.SYSTEM_OVERLAY_WINDOW)
+    if (overlayWindow != "GRANTED") {
+      permissionsToRequest.add(Const.SYSTEM_OVERLAY_WINDOW)
+    }
     if (permissionsToRequest.isNotEmpty()) {
       currentActivity?.let {
         ActivityCompat.requestPermissions(
@@ -273,6 +276,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
     val permissions = Arguments.createMap()
     permissions.putString("RECORD_AUDIO", recordAudio)
     permissions.putString("CALL_PHONE", callPhone)
+    permissions.putString("SYSTEM_OVERLAY_WINDOW", overlayWindow)
 
     callback(permissions)
   }

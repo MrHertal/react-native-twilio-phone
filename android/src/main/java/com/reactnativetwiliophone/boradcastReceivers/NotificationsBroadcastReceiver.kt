@@ -1,4 +1,4 @@
-package com.reactnativetwiliophone.utils
+package com.reactnativetwiliophone.boradcastReceivers
 
 import android.app.PendingIntent
 import android.app.PendingIntent.*
@@ -6,6 +6,7 @@ import android.content.*
 import android.os.Bundle
 import com.facebook.react.HeadlessJsTaskService
 import androidx.core.app.NotificationManagerCompat
+import com.reactnativetwiliophone.Const
 
 class NotificationsBroadcastReceiver : BroadcastReceiver() {
 
@@ -13,7 +14,7 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
         val extras: Bundle? = intent.extras
         if (extras != null) {
             val notification =
-                    intent.getParcelableExtra(NotificationUtils.EXTRA_NOTIFICATION) as Bundle?
+                    intent.getParcelableExtra(Const.EXTRA_NOTIFIER) as Bundle?
             if (notification != null) {
                 val action = intent.getStringExtra("action")
                 val notificationId = intent.getIntExtra("notificationId", 1)
@@ -40,7 +41,7 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
                     )
                     notification.putString("action", action)
                     notification.putInt("notificationId", notificationId)
-                    headlessIntent.putExtra(NotificationUtils.EXTRA_NOTIFICATION, notification)
+                    headlessIntent.putExtra(Const.EXTRA_NOTIFIER, notification)
                     val name: ComponentName? = context.startService(headlessIntent)
                     if (name != null) {
                         HeadlessJsTaskService.acquireWakeLockNow(context)

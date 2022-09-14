@@ -1,35 +1,35 @@
 package com.reactnativetwiliophone.utils
 
-import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import com.facebook.react.bridge.ReadableMap
+import com.reactnativetwiliophone.Const
 import com.reactnativetwiliophone.R
+import com.reactnativetwiliophone.overlayView.MyOverViewService
+import com.reactnativetwiliophone.overlyView.OverlayService
 
 
 object ViewUtils {
 
-   const val CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084
-  const val EXTRA_NOTIFIER = "com.rn.simple.notifier.clicked"
 
-  const val ACTIVITY_NAME = "activityName"
-  const val ACTION = "action"
-  const val REJECT = "reject"
-  const val ANSWER = "answer"
-  const val CALLER_NAME = "callerName"
-
-  fun showCallView(context: Context, data: ReadableMap, activity: Activity) {
-    val callerName = data.getString(CALLER_NAME)
+  fun showCallView(context: Context, data: ReadableMap) {
+    val callerName = data.getString(Const.CALLER_NAME)
 
     if (checkFloatingWindowPermission(context)) {
-      val intent = Intent(activity, ViewService::class.java)
-      intent.putExtra(ACTIVITY_NAME, activity.componentName.className)
-      intent.putExtra(CALLER_NAME,callerName)
-      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      val intent = Intent(context, MyOverViewService::class.java)
+      intent.putExtra(Const.CALLER_NAME,callerName)
+     // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       context.startService(intent)
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        context.startForegroundService(intent)
+      } else {
+        context.startService(intent)
+      }
     }
       //activity.startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION)
 
@@ -40,15 +40,47 @@ object ViewUtils {
       if (Settings.canDrawOverlays(context)) {
         true
       } else {
-        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+          Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        } else {
+          TODO("VERSION.SDK_INT < M")
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Toast.makeText(context.applicationContext, R.string.permission_floating_window, Toast.LENGTH_SHORT)
-          .show()
         context.startActivity(intent)
+       // showPermissionDialog(context)
         false
       }
     } else {
       true
     }
+  }
+
+  private fun showPermissionDialog(context: Context) {
+    val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(context)
+    builder.setTitle("Permission Required")
+    builder.setMessage(
+      "To enable call view to when app close, on the home device screen and over apps, please Enable action to manage overly permission now?"
+    )
+    builder.setNegativeButton("No", object : DialogInterface.OnClickListener {
+      override  fun onClick(dialogInterface: DialogInterface, i: Int) {
+        Toast.makeText(context.applicationContext, R.string.permission_floating_window, Toast.LENGTH_SHORT)
+          .show()
+        dialogInterface.dismiss()
+      }
+    })
+    builder.setPositiveButton("Yes", object : DialogInterface.OnClickListener {
+      override fun onClick(dialogInterface: DialogInterface?, i: Int) {
+          val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+          } else {
+            TODO("VERSION.SDK_INT < M")
+          }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          context.startActivity(intent)
+      }
+    })
+    val alertDialog: android.app.AlertDialog? = builder.create()
+    alertDialog!!.setCancelable(false)
+    alertDialog.show()
   }
 }

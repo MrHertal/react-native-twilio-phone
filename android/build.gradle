@@ -127,6 +127,9 @@ dependencies {
   // noinspection GradleDynamicVersion
   implementation 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
+  implementation 'androidx.core:core-ktx:1.9.0'
+  implementation 'androidx.appcompat:appcompat:1.5.1'
 
   implementation 'com.twilio:voice-android:6.0.7'
 }

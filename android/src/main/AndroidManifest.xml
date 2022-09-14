@@ -2,5 +2,7 @@
   xmlns:tools="http://schemas.android.com/tools"
   package="com.reactnativetwiliophone"
   >
-  <application tools:node="merge" />
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <application tools:node="merge" />
 </manifest>
