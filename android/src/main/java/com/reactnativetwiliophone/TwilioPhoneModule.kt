@@ -55,8 +55,16 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         }
       })
   }
-
   @ReactMethod
+  fun requestWindowsDrawPermission() {
+    val acitivity=currentActivity
+    if(acitivity!=null){
+      ViewUtils.checkWindowsDrawWithDialogPermission(acitivity,reactApplicationContext);
+    }
+  }
+
+
+    @ReactMethod
   fun showCallNotification(payload: ReadableMap) {
      ViewUtils.showCallView(reactApplicationContext, payload);
   //  NotificationUtils.showCallNotification(reactApplicationContext, payload, notificationId)

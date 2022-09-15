@@ -25,7 +25,8 @@ open class BaseView(
 
     protected fun show(view: View) {
         logIfError {
-            windowManager!!.addView(view, windowParams)
+          windowManager!!.removeView(view)
+          windowManager!!.addView(view, windowParams)
         }
     }
 

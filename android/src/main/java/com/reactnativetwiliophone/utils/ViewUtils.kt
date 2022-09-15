@@ -1,5 +1,6 @@
 package com.reactnativetwiliophone.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -33,7 +34,6 @@ object ViewUtils {
       //activity.startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION)
 
   }
-
   private fun checkFloatingWindowPermission(context: Context): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       if (Settings.canDrawOverlays(context)) {
@@ -53,16 +53,28 @@ object ViewUtils {
       true
     }
   }
+  public fun checkWindowsDrawWithDialogPermission(activity: Activity,context: Context): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      if (Settings.canDrawOverlays(context)) {
+        true
+      } else {
+        showPermissionDialog(activity,context)
+        false
+      }
+    } else {
+      true
+    }
+  }
 
-  private fun showPermissionDialog(context: Context) {
-    val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(context)
+  private fun showPermissionDialog(activity: Activity,context: Context) {
+    val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(activity)
     builder.setTitle("Permission Required")
     builder.setMessage(
       "To enable call view to when app close, on the home device screen and over apps, please Enable action to manage overly permission now?"
     )
     builder.setNegativeButton("No", object : DialogInterface.OnClickListener {
       override  fun onClick(dialogInterface: DialogInterface, i: Int) {
-        Toast.makeText(context.applicationContext, R.string.permission_floating_window, Toast.LENGTH_SHORT)
+        Toast.makeText(activity, R.string.permission_floating_window, Toast.LENGTH_SHORT)
           .show()
         dialogInterface.dismiss()
       }
@@ -75,7 +87,7 @@ object ViewUtils {
             TODO("VERSION.SDK_INT < M")
           }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-          context.startActivity(intent)
+        activity.startActivity(intent)
       }
     })
     val alertDialog: android.app.AlertDialog? = builder.create()
