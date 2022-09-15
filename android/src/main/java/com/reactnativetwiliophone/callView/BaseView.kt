@@ -1,4 +1,4 @@
-package com.reactnativetwiliophone.overlyView
+package com.reactnativetwiliophone.callView
 
 import android.app.Service
 import android.content.Context
@@ -9,7 +9,7 @@ import android.view.View
 import android.view.WindowManager
 
 
-open class BaseOverlyView(
+open class BaseView(
     context: Context
 ) : Logger by LoggerImpl() {
 

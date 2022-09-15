@@ -1,4 +1,4 @@
-package com.reactnativetwiliophone.overlyView
+package com.reactnativetwiliophone.callView
 
 import android.content.Context
 import android.graphics.Rect

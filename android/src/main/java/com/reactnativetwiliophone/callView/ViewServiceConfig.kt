@@ -1,10 +1,10 @@
-package com.reactnativetwiliophone.overlyView
+package com.reactnativetwiliophone.callView
 
 import android.app.Service
 
-abstract class OverlayServiceConfig : Service() {
+abstract class ViewServiceConfig : Service() {
 
-    private var overLyView: OverLyView? = null
+    private var callView: CallView? = null
 
     // lifecycle -----------------------------------------------------------------------------------
 
@@ -16,33 +16,33 @@ abstract class OverlayServiceConfig : Service() {
     // override ------------------------------------------------------------------------------------
 
 
-    open fun setupOverLyView(action: OverLyView.Action): OverLyView.Builder? = null
+    open fun setupCallView(action: CallView.Action): CallView.Builder? = null
 
     // public func ---------------------------------------------------------------------------------
     protected fun setupViewAppearance() {
 
-        overLyView = setupOverLyView(customOverLyViewListener)
+        callView = setupCallView(customCallViewListener)
             ?.build()
 
 
         onMainThread {
-            tryShowOverLyView()
+            tryShowCallView()
         }
     }
 
 
     // private func --------------------------------------------------------------------------------
 
-    private val customOverLyViewListener = object : OverLyView.Action {
+    private val customCallViewListener = object : CallView.Action {
 
-        override fun popOverLyView() {
-            tryShowOverLyView()
+        override fun popCallView() {
+            tryShowCallView()
         }
     }
 
-    private fun tryNavigateToOverLyView() {
+    private fun tryNavigateToCallView() {
 
-        tryShowOverLyView()
+        tryShowCallView()
             .onComplete {
             }.onError {
                 throw NullViewException("you DID NOT override expandable view")
@@ -57,17 +57,17 @@ abstract class OverlayServiceConfig : Service() {
     }
 
     private fun tryRemoveAllView() {
-        tryRemoveOverLyView()
+        tryRemoveCallView()
     }
 
     // shorten -------------------------------------------------------------------------------------
 
-    private fun tryRemoveOverLyView() = logIfError {
-        overLyView!!.remove()
+    private fun tryRemoveCallView() = logIfError {
+        callView!!.remove()
     }
 
-    private fun tryShowOverLyView() = logIfError {
-        overLyView!!.show()
+    private fun tryShowCallView() = logIfError {
+        callView!!.show()
     }
 
 

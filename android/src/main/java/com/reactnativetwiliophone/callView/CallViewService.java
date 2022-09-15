@@ -1,4 +1,4 @@
-package com.reactnativetwiliophone.overlayView;
+package com.reactnativetwiliophone.callView;
 
 import static android.app.PendingIntent.getBroadcast;
 
@@ -23,13 +23,13 @@ import com.facebook.react.HeadlessJsTaskService;
 import com.reactnativetwiliophone.Const;
 import com.reactnativetwiliophone.R;
 import com.reactnativetwiliophone.boradcastReceivers.NotificationsHeadlessReceiver;
-import com.reactnativetwiliophone.overlyView.OverlayService;
-import com.reactnativetwiliophone.overlyView.OverLyView;
+import com.reactnativetwiliophone.callView.ViewService;
+import com.reactnativetwiliophone.callView.CallView;
 
 import java.util.UUID;
 
 
-public class MyOverViewService extends OverlayService {
+public class CallViewService extends ViewService {
   private  Intent mIntent ;
   private Bundle extras;
   private TextView textView;
@@ -107,14 +107,14 @@ public class MyOverViewService extends OverlayService {
 
     @Nullable
     @Override
-    public OverLyView.Builder setupOverLyView(@NonNull OverLyView.Action action) {
+    public CallView.Builder setupCallView(@NonNull CallView.Action action) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.overly_view, null);
+        View layout = inflater.inflate(R.layout.call_view, null);
 
 
         layout.findViewById(R.id.expanded).setOnClickListener(v -> {
 //            Toast.makeText(this, "hello from card view from java", Toast.LENGTH_SHORT).show();
-            action.popOverLyView();
+            action.popCallView();
         });
         TextView textView= layout.findViewById(R.id.callerNameV);
 
@@ -133,23 +133,23 @@ public class MyOverViewService extends OverlayService {
           tryStopService();
         });
 
-        return new OverLyView.Builder()
+        return new CallView.Builder()
                 .with(this)
-                .setOverLyView(layout)
+                .setCallView(layout)
                 .setDimAmount(0.8f)
-                .addOverLyViewListener(new OverLyView.Action() {
+                .addCallViewListener(new CallView.Action() {
                     @Override
-                    public void popOverLyView() {
-                        this.popOverLyView();
+                    public void popCallView() {
+                        this.popCallView();
                     }
 
                     @Override
-                    public void onOpenOverLyView() {
+                    public void onOpenCallView() {
                         Log.d("<>", "onOpenFloatingView: ");
                     }
 
                     @Override
-                    public void onCloseOverLyView() {
+                    public void onCloseCallView() {
                         Log.d("<>", "onCloseFloatingView: ");
                     }
                 });

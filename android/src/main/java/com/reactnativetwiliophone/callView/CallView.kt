@@ -1,13 +1,14 @@
-package com.reactnativetwiliophone.overlyView
+package com.reactnativetwiliophone.callView
 
 import android.content.Context
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import com.reactnativetwiliophone.callView.BaseView
 
-class OverLyView(
-    private val builder: OverLyView.Builder
-) : BaseOverlyView(builder.context) {
+class CallView(
+    private val builder: CallView.Builder
+) : BaseView(builder.context) {
 
     init {
         setupLayoutParams()
@@ -17,9 +18,9 @@ class OverLyView(
 
     interface Action {
 
-        fun popOverLyView() {}
-        fun onOpenOverLyView() {}
-        fun onCloseOverLyView() {}
+        fun popCallView() {}
+        fun onOpenCallView() {}
+        fun onCloseCallView() {}
 
     }
 
@@ -28,14 +29,14 @@ class OverLyView(
     fun show() = logIfError {
         super.show(builder.rootView!!)
     }.onComplete {
-        builder.listener.onOpenOverLyView()
+        builder.listener.onOpenCallView()
     }
 
 
     fun remove() = logIfError {
         super.remove(builder.rootView!!)
     }.onComplete {
-        builder.listener.onCloseOverLyView()
+        builder.listener.onCloseCallView()
     }
 
 
@@ -61,12 +62,12 @@ class OverLyView(
 
     // builder class -------------------------------------------------------------------------------
 
-    class Builder : IOverLyViewBuilder {
+    class Builder : ICallViewBuilder {
 
         lateinit var context: Context
 
         var rootView: View? = null
-        var listener = object : OverLyView.Action {}
+        var listener = object : CallView.Action {}
 
         var dim = 0.5f
 
@@ -75,12 +76,12 @@ class OverLyView(
             return this
         }
 
-        override fun setOverLyView(view: View): Builder {
+        override fun setCallView(view: View): Builder {
             this.rootView = view
             return this
         }
 
-        override fun addOverLyViewListener(action: OverLyView.Action): Builder {
+        override fun addCallViewListener(action: CallView.Action): Builder {
             this.listener = action
             return this
         }
@@ -91,23 +92,23 @@ class OverLyView(
         }
 
 
-        override fun build(): OverLyView {
-            return OverLyView(this)
+        override fun build(): CallView {
+            return CallView(this)
         }
 
     }
 }
 
-private interface IOverLyViewBuilder {
+private interface ICallViewBuilder {
 
-    fun with(context: Context): IOverLyViewBuilder
+    fun with(context: Context): ICallViewBuilder
 
-    fun setOverLyView(view: View): IOverLyViewBuilder
+    fun setCallView(view: View): ICallViewBuilder
 
-    fun addOverLyViewListener(action: OverLyView.Action): IOverLyViewBuilder
+    fun addCallViewListener(action: CallView.Action): ICallViewBuilder
 
-    fun setDimAmount(dimAmount: Float): IOverLyViewBuilder
+    fun setDimAmount(dimAmount: Float): ICallViewBuilder
 
-    fun build(): OverLyView
+    fun build(): CallView
 
 }

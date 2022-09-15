@@ -259,10 +259,10 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
     if (callPhone != "GRANTED") {
       permissionsToRequest.add(android.Manifest.permission.CALL_PHONE)
     }
-    val overlayWindow = checkPermission(Const.SYSTEM_OVERLAY_WINDOW)
-    if (overlayWindow != "GRANTED") {
-      permissionsToRequest.add(Const.SYSTEM_OVERLAY_WINDOW)
-    }
+  //  val overlayWindow = checkPermission(Const.SYSTEM_OVERLAY_WINDOW)
+   // if (overlayWindow != "GRANTED") {
+  //    permissionsToRequest.add(Const.SYSTEM_OVERLAY_WINDOW)
+  //  }
     if (permissionsToRequest.isNotEmpty()) {
       currentActivity?.let {
         ActivityCompat.requestPermissions(
@@ -276,7 +276,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
     val permissions = Arguments.createMap()
     permissions.putString("RECORD_AUDIO", recordAudio)
     permissions.putString("CALL_PHONE", callPhone)
-    permissions.putString("SYSTEM_OVERLAY_WINDOW", overlayWindow)
+   // permissions.putString("SYSTEM_OVERLAY_WINDOW", overlayWindow)
 
     callback(permissions)
   }

@@ -9,8 +9,7 @@ import android.widget.Toast
 import com.facebook.react.bridge.ReadableMap
 import com.reactnativetwiliophone.Const
 import com.reactnativetwiliophone.R
-import com.reactnativetwiliophone.overlayView.MyOverViewService
-import com.reactnativetwiliophone.overlyView.OverlayService
+import com.reactnativetwiliophone.callView.CallViewService
 
 
 object ViewUtils {
@@ -20,7 +19,7 @@ object ViewUtils {
     val callerName = data.getString(Const.CALLER_NAME)
 
     if (checkFloatingWindowPermission(context)) {
-      val intent = Intent(context, MyOverViewService::class.java)
+      val intent = Intent(context, CallViewService::class.java)
       intent.putExtra(Const.CALLER_NAME,callerName)
      // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       context.startService(intent)
