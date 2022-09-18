@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/root_containerV"
-        android:layout_margin="24dp"
+        android:layout_margin="16dp"
         android:padding="16dp"
       android:background="@drawable/layout_bg"
       android:orientation="vertical">

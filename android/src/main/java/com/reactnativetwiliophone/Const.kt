@@ -3,6 +3,8 @@ package com.reactnativetwiliophone
 import android.os.Build
 
 object Const {
+  const val ACTION_STOP_LISTEN = "action_stop_listen"
+
   const val INCOMING_CALL_CHANNEL_NAME = "incoming_call_channel_name"
   const val SYSTEM_OVERLAY_WINDOW = "android.permission.SYSTEM_OVERLAY_WINDOW"
   const val INCOMING_CALL_CHANNEL_ID = "incoming_call_channel_id"

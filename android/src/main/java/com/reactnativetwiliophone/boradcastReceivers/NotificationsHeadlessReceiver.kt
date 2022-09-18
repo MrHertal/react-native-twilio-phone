@@ -3,6 +3,7 @@ package com.reactnativetwiliophone.boradcastReceivers
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.Nullable
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.facebook.react.HeadlessJsTaskService
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
@@ -25,8 +26,15 @@ class NotificationsHeadlessReceiver : HeadlessJsTaskService() {
                         true // optional: defines whether or not  the task is allowed in foreground. Default is false
                 )
             }
+          stopSelf()
+          stopForeground(false)
         }
         return null
     }
+  override fun onDestroy() {
+    super.onDestroy()
+    // cancel any running threads here
+   // LocalBroadcastManager.getInstance(this).unregisterReceiver(NotificationsHeadlessReceiver)
+  }
 }
 

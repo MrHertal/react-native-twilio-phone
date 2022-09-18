@@ -1,6 +1,7 @@
 package com.reactnativetwiliophone.callView
 
 import android.annotation.TargetApi
+import android.app.ActivityManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -55,6 +56,7 @@ abstract class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
         val notification = setupNotificationBuilder(channelId)
 
         startForeground(notificationId(), notification)
+
     }
 
 
@@ -102,17 +104,17 @@ abstract class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
   }*/
 
 
-    open fun setupNotificationBuilder(channelId: String): Notification {
 
-        return NotificationCompat.Builder(this, channelId)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.logo_round)
-            .setContentTitle("icomming")
-            //.setContentText(extras.getString(Const.CALLER_NAME))
-            .setPriority(PRIORITY_MIN)
-            .setCategory(Notification.CATEGORY_SERVICE)
-            .build()
-    }
+  open fun setupNotificationBuilder(channelId: String): Notification {
+    return NotificationCompat.Builder(this, channelId)
+      .setOngoing(true)
+      .setSmallIcon(R.drawable.logo_round)
+      .setContentTitle("Incomming Call")
+//            .setContentText("click to do nothing")
+      .setPriority(PRIORITY_MIN)
+      .setCategory(Notification.CATEGORY_SERVICE)
+      .build()
+  }
 
 
     @Deprecated("this function may not work properly", ReplaceWith("true"))
@@ -128,7 +130,7 @@ abstract class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
     ): String {
         val channel = NotificationChannel(
             channelId,
-            channelName, NotificationManager.IMPORTANCE_NONE
+            channelName, NotificationManager.IMPORTANCE_LOW
         )
         channel.lightColor = Color.BLUE
         channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE

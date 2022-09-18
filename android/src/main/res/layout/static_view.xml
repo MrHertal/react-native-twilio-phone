@@ -3,20 +3,21 @@
     android:id="@+id/l_containerV"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
     android:layout_gravity="bottom"
     android:layout_marginBottom="48dp"
     android:orientation="horizontal">
 
 
-    <ImageView
+    <ImageButton
         android:id="@+id/imgDecline"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_weight="1"
         android:gravity="end"
-        android:src="@drawable/ic_end_call_icon" />
+      android:clickable="true"
+        android:background="@drawable/roundcorner"
+      android:src="@drawable/call_end_selector" />
 
 
     <View
@@ -24,13 +25,15 @@
         android:layout_height="1dp"
         android:layout_weight="1" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/imgAnswer"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginEnd="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
         android:layout_weight="1"
-        android:gravity="start"
-        android:src="@drawable/ic_accept_call_icon" />
+      android:clickable="true"
+      android:background="@drawable/roundcorner"
+      android:gravity="start"
+        android:src="@drawable/call_accept_selector" />
 
 </LinearLayout>

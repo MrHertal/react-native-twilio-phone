@@ -66,8 +66,9 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
   fun showCallNotification(payload: ReadableMap) {
-     ViewUtils.showCallView(reactApplicationContext, payload);
-  //  NotificationUtils.showCallNotification(reactApplicationContext, payload, notificationId)
+      val acitivity=currentActivity
+      ViewUtils.showCallView(acitivity!!,reactApplicationContext,payload);
+  //  NotificationUtils.showCallNotification(reactApplicationContext, payload, Const.NOTIFICATION_ID)
   }
 
   @ReactMethod
@@ -93,7 +94,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         val pushData = Arguments.createMap()
         pushData.putString("callerName", caller)
         pushData.putString("callSid", callInvite.callSid)
-        NotificationUtils.showCallNotification(reactApplicationContext, pushData, NOTIFICATION_ID)
+        showCallNotification(pushData)
         sendEvent(reactApplicationContext, "CallInvite", params)
       }
 

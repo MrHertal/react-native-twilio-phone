@@ -1,9 +1,12 @@
 package com.reactnativetwiliophone.utils
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
@@ -16,22 +19,26 @@ import com.reactnativetwiliophone.callView.CallViewService
 object ViewUtils {
 
 
-  fun showCallView(context: Context, data: ReadableMap) {
+  fun showCallView(acitivity:Activity,context: Context, data: ReadableMap) {
     val callerName = data.getString(Const.CALLER_NAME)
 
-    if (checkFloatingWindowPermission(context)) {
-      val intent = Intent(context, CallViewService::class.java)
-      intent.putExtra(Const.CALLER_NAME,callerName)
-     // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-      context.startService(intent)
+      if (checkFloatingWindowPermission(context)) {
+        val cmp = ComponentName(context, CallViewService::class.java)
+        context.packageManager?.setComponentEnabledSetting(
+          cmp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+          PackageManager.DONT_KILL_APP
+        )
+        val intent = Intent(context, CallViewService::class.java)
+        intent.putExtra(Const.CALLER_NAME,callerName)
+        // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(Const.ACTION_STOP_LISTEN)
 
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        context.startForegroundService(intent)
-      } else {
-        context.startService(intent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+          context.startService(intent)
+        } else {
+          context.startService(intent)
+        }
       }
-    }
-      //activity.startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION)
 
   }
   private fun checkFloatingWindowPermission(context: Context): Boolean {
@@ -52,6 +59,21 @@ object ViewUtils {
     } else {
       true
     }
+  }
+
+  fun isAppRunning(context: Context): Boolean {
+    val activityManager: ActivityManager =
+      context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val procInfos: List<ActivityManager.RunningAppProcessInfo> =
+      activityManager.getRunningAppProcesses()
+    if (procInfos != null) {
+      for (processInfo in procInfos) {
+        if (processInfo.processName.equals(context.packageName)) {
+          return true
+        }
+      }
+    }
+    return false
   }
   public fun checkWindowsDrawWithDialogPermission(activity: Activity,context: Context): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

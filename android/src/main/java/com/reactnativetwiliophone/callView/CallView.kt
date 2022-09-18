@@ -1,10 +1,10 @@
 package com.reactnativetwiliophone.callView
 
 import android.content.Context
+import android.graphics.PixelFormat
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import com.reactnativetwiliophone.callView.BaseView
 
 class CallView(
     private val builder: CallView.Builder
@@ -20,7 +20,7 @@ class CallView(
 
         fun popCallView() {}
         fun onOpenCallView() {}
-        fun onCloseCallView() {}
+       // fun onCloseCallView() {}
 
     }
 
@@ -36,7 +36,7 @@ class CallView(
     fun remove() = logIfError {
         super.remove(builder.rootView!!)
     }.onComplete {
-        builder.listener.onCloseCallView()
+     //   builder.listener.onCloseCallView()
     }
 
 
@@ -47,13 +47,14 @@ class CallView(
 
         logIfError {
 
+
             windowParams!!.apply {
                 width = WindowManager.LayoutParams.MATCH_PARENT
                 gravity = Gravity.TOP
                 flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
                 dimAmount = builder.dim         // default = 0.5f
                 softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
-//            windowAnimations = R.style.TransViewStyle
+           //  windowAnimations = R.style.TransViewStyle
             }
 
         }

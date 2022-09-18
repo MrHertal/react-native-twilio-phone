@@ -1,9 +1,11 @@
 package com.reactnativetwiliophone.callView
 
+import android.app.ActivityManager
 import android.app.Service
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -15,24 +17,50 @@ open class BaseView(
 
     var windowManager: WindowManager? = null
     var windowParams: WindowManager.LayoutParams? = null
+  var mContext: Context? = null
 
     init {
         windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
         windowParams = WindowManager.LayoutParams()
+        mContext=context
     }
 
     // public --------------------------------------------------------------------------------------
 
     protected fun show(view: View) {
         logIfError {
-          windowManager!!.removeView(view)
-          windowManager!!.addView(view, windowParams)
+
+            if (view.getParent() != null) {
+              Log.v("callMyService", "REMOVE! view in BaseView view.getParent not null");
+              windowManager!!.removeView(view)
+            }
+            windowManager!!.addView(view, windowParams)
+
         }
     }
-
+  fun isAppRunning(): Boolean {
+    val activityManager: ActivityManager =
+      mContext?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val procInfos: List<ActivityManager.RunningAppProcessInfo> =
+      activityManager.getRunningAppProcesses()
+    if (procInfos != null) {
+      for (processInfo in procInfos) {
+        if (processInfo.processName.equals(mContext?.packageName)) {
+          Log.v("callMyService", "app BaseView running = true");
+          return true
+        }
+      }
+    }
+    Log.v("callMyService", "app BaseView NOT running = false");
+    return false
+  }
     protected fun remove(view: View) {
         tryOnly {
+           if (view.visibility == View.VISIBLE){
+            View.INVISIBLE
+             }
             windowManager!!.removeView(view)
+
         }
     }
 
@@ -52,10 +80,18 @@ open class BaseView(
             windowParams!!.apply {
                 width = WindowManager.LayoutParams.WRAP_CONTENT
                 height = WindowManager.LayoutParams.WRAP_CONTENT
-
+              flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                 gravity = Gravity.CENTER
-                format = PixelFormat.TRANSLUCENT
-                flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+              type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+              } else {
+                // for android version lower than 8
+                WindowManager.LayoutParams.TYPE_PHONE
+              }
+            /*    format = PixelFormat.TRANSLUCENT
+                flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+               flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                         WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
 
                 type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -63,7 +99,7 @@ open class BaseView(
                 } else {
                     // for android version lower than 8
                     WindowManager.LayoutParams.TYPE_PHONE
-                }
+                }*/
             }
 
         }

@@ -121,9 +121,9 @@ class CallViewServiceKt : ViewService() {
           Log.d("<>", "onOpenFloatingView: ")
         }
 
-        override fun onCloseCallView() {
+       /* override fun onCloseCallView() {
           Log.d("<>", "onCloseFloatingView: ")
-        }
+        }*/
       })
   }
 

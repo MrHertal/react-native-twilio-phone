@@ -7,10 +7,13 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
@@ -33,9 +36,23 @@ public class CallViewService extends ViewService {
   private  Intent mIntent ;
   private Bundle extras;
   private TextView textView;
+
   @Override
   public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-
+  /*  if (intent.getAction().equals("StopService")) {
+      stopForeground(true);
+      Log.d("callMyService", "StopService onStartCommand");
+      stopSelf();
+      return START_NOT_STICKY;
+    }*/
+    if (intent != null) {
+      String action = intent.getAction();
+      if(action==Const.ACTION_STOP_LISTEN){
+        Log.d("callMyService", "ACTION_STOP_LISTEN");
+        stopForeground(true);
+        stopSelf();
+      }
+    }
     mIntent= intent;
       Log.d("callMyService", "onStartCommand");
     extras = intent.getExtras();
@@ -45,67 +62,21 @@ public class CallViewService extends ViewService {
     return super.onStartCommand(intent, flags, startId);
   }
 
-  private PendingIntent createNotificationIntent(
-            Context  context ,
-          //  Bundle notificationDataBundle  ,
-            String  actionType  ,
-            int notificationId  ,
-            String   activityName
-            ) {
-      int pendingFlags;
-      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-        pendingFlags = PendingIntent.FLAG_IMMUTABLE;
-      } else {
-        pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-      }
-
-      Intent clickIntentData = null;
-      try {
-        clickIntentData = new Intent(this, Class.forName(context.getPackageName()+".MainActivity"));
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-      }
+  @NonNull
+  @Override
+  public Notification setupNotificationBuilder(@NonNull String channelId) {
+    return new NotificationCompat.Builder(this, channelId)
+      .setOngoing(true)
+      .setSmallIcon(R.drawable.logo_round)
+      .setContentTitle("Incomming Call")
+      .setTicker("Call_STATUS")
+      .setPriority(NotificationCompat.PRIORITY_MIN)
+      .setCategory(Notification.CATEGORY_SERVICE)
+      .build();
+  }
 
 
-
-        clickIntentData.putExtra("action", actionType);
-        clickIntentData.putExtra("notificationId", notificationId);
-        clickIntentData.putExtra("activityName", activityName);
-
-
-        int requestCode = UUID.randomUUID().hashCode();
-        return getBroadcast(context, requestCode, clickIntentData, pendingFlags );
-    }
-    // for android 8 and above
-    @NonNull
-    @Override
-    public Notification setupNotificationBuilder(@NonNull String channelId) {
-
-        RemoteViews remoteView = new RemoteViews(this.getPackageName(), R.layout.notification_view);
-       // Bundle notificationDataBundle = Arguments.toBundle(notificationData);
-
-        PendingIntent bodyIntent =
-            createNotificationIntent(this,"tabbed", Const.NOTIFICATION_ID, this.getPackageName()+".MainActivity");
-        //remoteView.setOnClickPendingIntent(R.id.imgAnswer, answerIntent)
-        // remoteView.setOnClickPendingIntent(R.id.imgDecline, rejectIntent)
-        remoteView.setTextViewText(R.id.callerNameN, "test");
-        NotificationCompat.Builder notificationBuilder=
-                new NotificationCompat.Builder(this, channelId)
-                .setOngoing(true)
-                        .setSmallIcon(R.drawable.logo_round)
-                        .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
-                        .setCategory(Notification.CATEGORY_SERVICE)
-                        .setTicker("Call_STATUS")
-                        .setOngoing(true);
-                       // .setCustomContentView(remoteView)
-                       // .setFullScreenIntent(bodyIntent, true);
-        return notificationBuilder.build();
-    }
-
-
-
-
-    @Nullable
+  @Nullable
     @Override
     public CallView.Builder setupCallView(@NonNull CallView.Action action) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -122,17 +93,15 @@ public class CallViewService extends ViewService {
           textView.setText(extras.getString(Const.CALLER_NAME));
         }
 
-        layout.findViewById(R.id.imgDecline).setOnClickListener(v->{
-          handleIntent(extras,Const.REJECT);
-          tryStopService();
-        });
+       ImageButton imgDeclineBtn =layout.findViewById(R.id.imgDecline);
+       ImageButton imgAnswerBtn =layout.findViewById(R.id.imgAnswer);
 
-        layout.findViewById(R.id.imgAnswer).setOnClickListener(v->{
-
-          handleIntent(extras,Const.ANSWER);
-          tryStopService();
-        });
-
+    imgAnswerBtn.setOnClickListener(v->{
+      handleIntent(extras,Const.ANSWER);
+    });
+    imgDeclineBtn.setOnClickListener(v->{
+      handleIntent(extras,Const.REJECT);
+    });
         return new CallView.Builder()
                 .with(this)
                 .setCallView(layout)
@@ -145,43 +114,39 @@ public class CallViewService extends ViewService {
 
                     @Override
                     public void onOpenCallView() {
-                        Log.d("<>", "onOpenFloatingView: ");
+                      Log.d("<>", "onOpenFloatingView: ");
                     }
 
-                    @Override
+                  /*  @Override
                     public void onCloseCallView() {
-                        Log.d("<>", "onCloseFloatingView: ");
-                    }
+                        Log.d("callMyService", "onCloseFloatingView: ");
+                       // tryStopService();
+                    }*/
                 });
     }
 
   public void handleIntent(Bundle extras, String type) {
     Log.d("callMyService", "callExtra not null");
-    Intent  appIntent = null;
     try {
-      appIntent = new Intent(this, Class.forName("com.iriscrm.MainActivity"));
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    }
+
     int pendingFlags;
+
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
       pendingFlags = PendingIntent.FLAG_IMMUTABLE;
     } else {
       pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
     }
-    PendingIntent contentIntent = PendingIntent.getActivity(
-      this,
-      0,
-      appIntent,
-      pendingFlags
-    );
-    try {
-      Log.d("callMyService", " contentIntent.send");
-      contentIntent.send();
-    } catch (PendingIntent.CanceledException e) {
-      Log.d("callMyService", " contentIntent.send CanceledException = $e");
-    }
-    try {
+    //  if(!isAppRunning()){
+        Intent  appIntent = new Intent(this, Class.forName("com.iriscrm.MainActivity"));
+        PendingIntent contentIntent = PendingIntent.getActivity(
+          this,
+          0,
+          appIntent,
+          pendingFlags
+        );
+        contentIntent.send();
+    //  }
+
       Intent headlessIntent = new Intent(
         this,
         NotificationsHeadlessReceiver.class
@@ -192,9 +157,32 @@ public class CallViewService extends ViewService {
       if (name != null) {
         HeadlessJsTaskService.acquireWakeLockNow(this);
       }
+      Log.d("callMyService", "finish service A");
+
       tryStopService();
-    } catch (IllegalStateException ignored) {
+
+      ComponentName cmp = new ComponentName(this.getApplicationContext(), CallViewService.class);
+      this.getPackageManager().setComponentEnabledSetting(
+        cmp, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+        PackageManager.DONT_KILL_APP
+      );
+     // android.os.Process.killProcess(android.os.Process.myPid());
+
+    } catch (Exception e) {
+
+      Log.d("callMyService", "Exception ="+e.toString());
+     // android.os.Process.killProcess(android.os.Process.myPid());
+      tryStopService();
+
     }
   }
+  @Override
+  public void onTaskRemoved(Intent rootIntent) {
+    Log.d("callMyService", "onTaskRemoved");
 
+    super.onTaskRemoved(rootIntent);
+    //do something you want
+    //stop service
+    this.stopSelf();
+  }
 }

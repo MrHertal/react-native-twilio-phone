@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+  <color name="colorPrimary">#008577</color>
+  <color name="colorPrimaryDark">#00574B</color>
+  <color name="colorAccent">#D81B60</color>
+
   <color name="incall_callTypeSip">#99CE3F</color>
   <color name="incall_call_banner_background">#fafafb</color>
   <color name="incall_call_state_label_background">#c1daf1</color>
