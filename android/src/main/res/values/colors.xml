@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+  <color name="colorPrimary">#008577</color>
+  <color name="colorPrimaryDark">#00574B</color>
+  <color name="colorAccent">#D81B60</color>
+
   <color name="incall_callTypeSip">#99CE3F</color>
   <color name="incall_call_banner_background">#fafafb</color>
   <color name="incall_call_state_label_background">#c1daf1</color>
   <color name="incall_call_banner_text_color">#25005f</color>
+
+  <color name="touch_bar_color">#1e1e1e</color>
+  <color name="close_btn_bg_color">#1e1e1e</color>
+  <color name="close_btn_tint_color">#efefef</color>
+  <color name="fullscreen_btn_bg_color">#1e1e1e</color>
+  <color name="fullscreen_btn_tint_color">#efefef</color>
+  <color name="smallscreen_btn_bg_color">#1e1e1e</color>
+  <color name="smallscreen_btn_tint_color">#efefef</color>
+  <color name="resize_btn_bg_color">#fff</color>
+  <color name="resize_btn_tint_color">#1e1e1e</color>
+
 
 </resources>

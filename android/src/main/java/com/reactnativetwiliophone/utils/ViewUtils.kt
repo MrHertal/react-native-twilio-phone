@@ -1,54 +1,147 @@
 package com.reactnativetwiliophone.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
-import android.content.Intent
+import android.app.ActivityManager
+import android.app.Service
+import android.content.*
+import android.content.Context.BIND_AUTO_CREATE
+import android.content.Context.BIND_IMPORTANT
+import android.content.Intent.FLAG_ACTIVITY_NO_HISTORY
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.ReadableMap
+import com.reactnativetwiliophone.Actions
+import com.reactnativetwiliophone.Const
 import com.reactnativetwiliophone.R
+import com.reactnativetwiliophone.callView.ServiceState
+import com.reactnativetwiliophone.callView.ViewService
+import com.reactnativetwiliophone.callView.getServiceState
+import com.reactnativetwiliophone.log
 
 
 object ViewUtils {
 
-   const val CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084
-  const val EXTRA_NOTIFIER = "com.rn.simple.notifier.clicked"
-
-  const val ACTIVITY_NAME = "activityName"
-  const val ACTION = "action"
-  const val REJECT = "reject"
-  const val ANSWER = "answer"
-  const val CALLER_NAME = "callerName"
-
-  fun showCallView(context: Context, data: ReadableMap, activity: Activity) {
-    val callerName = data.getString(CALLER_NAME)
+  @SuppressLint("SuspiciousIndentation")
+  fun showCallView(context: Context, data: ReadableMap) {
+    val callerName = data.getString(Const.CALLER_NAME)
+    val callSid = data.getString(Const.CALL_SID)
 
     if (checkFloatingWindowPermission(context)) {
-      val intent = Intent(activity, ViewService::class.java)
-      intent.putExtra(ACTIVITY_NAME, activity.componentName.className)
-      intent.putExtra(CALLER_NAME,callerName)
-      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-      context.startService(intent)
+      if (callerName != null) {
+        val intent = Intent(context, ViewService::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(FLAG_ACTIVITY_NO_HISTORY)
+        intent.putExtra(Const.CALLER_NAME, callerName)
+        intent.putExtra(Const.CALL_SID, callSid)
+        intent.action = Actions.START.name
+        ContextCompat.startForegroundService(context, intent)
+        context.bindService(intent, ViewService().connection, 0);
+      }
     }
-      //activity.startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION)
 
   }
 
+
+
+  public fun actionOnService(action: Actions, context: Context, callerName: String) {
+      if (getServiceState(context) == ServiceState.STOPPED && action == Actions.STOP) return
+      val intent = Intent(context, ViewService::class.java)
+      intent.putExtra(Const.CALLER_NAME, callerName)
+      intent.action = action.name
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+      intent.addFlags(FLAG_ACTIVITY_NO_HISTORY)
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        context.startForegroundService(intent)
+      } else {
+        context.startService(intent)
+      }
+  }
+  fun checkServiceRunning(serviceClass: Class<*>,context: Context) : Boolean  {
+    log("======================= call check ServiceIfRunning 222=================");
+    val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+      if (serviceClass.name == service.service.className) {
+        return true
+      }
+    }
+    return false
+  }
+  fun isServiceRunning(serviceClassName: String?,context: Context): Boolean {
+    val activityManager =
+      context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val services: List<ActivityManager.RunningServiceInfo> = activityManager.getRunningServices(Int.MAX_VALUE)
+    for (runningServiceInfo in services) {
+      if (runningServiceInfo.service.getClassName().equals(serviceClassName)) {
+        return true
+      }
+    }
+    return false
+  }
   private fun checkFloatingWindowPermission(context: Context): Boolean {
+    //val foregroud: Boolean = ForegroundCheckTask()!.execute(context).get()
+
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       if (Settings.canDrawOverlays(context)) {
         true
       } else {
-        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+          Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        } else {
+          TODO("VERSION.SDK_INT < M")
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Toast.makeText(context.applicationContext, R.string.permission_floating_window, Toast.LENGTH_SHORT)
-          .show()
         context.startActivity(intent)
+        // showPermissionDialog(context)
         false
       }
     } else {
       true
     }
+  }
+
+  public fun checkWindowsDrawWithDialogPermission(activity: Activity, context: Context): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      if (Settings.canDrawOverlays(context)) {
+        true
+      } else {
+        showPermissionDialog(activity, context)
+        false
+      }
+    } else {
+      true
+    }
+  }
+
+
+  private fun showPermissionDialog(activity: Activity, context: Context) {
+    val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(activity)
+    builder.setTitle("SYSTEM ALERT WINDOW Permission Required")
+    builder.setMessage(
+      "To see incoming calls when the app close, please Enable action to manage overly permission now?"
+    )
+    builder.setNegativeButton("No", object : DialogInterface.OnClickListener {
+      override fun onClick(dialogInterface: DialogInterface, i: Int) {
+        Toast.makeText(activity, R.string.permission_floating_window, Toast.LENGTH_SHORT)
+          .show()
+        dialogInterface.dismiss()
+      }
+    })
+    builder.setPositiveButton("Yes", object : DialogInterface.OnClickListener {
+      override fun onClick(dialogInterface: DialogInterface?, i: Int) {
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+          Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        } else {
+          TODO("VERSION.SDK_INT < M")
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent)
+      }
+    })
+    val alertDialog: android.app.AlertDialog? = builder.create()
+    alertDialog!!.setCancelable(false)
+    alertDialog.show()
   }
 }

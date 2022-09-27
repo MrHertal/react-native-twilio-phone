@@ -4,7 +4,8 @@ import { RNTwilioPhone } from './RNTwilioPhone';
 export enum PermissionName {
   Record = 'RECORD', // iOS only
   RecordAudio = 'RECORD_AUDIO', // Android only
-  CallPhone = 'CALL_PHONE', // Android only
+  CallPhone = 'CALL_PHONE',
+  OVERLAY_WINDOW = 'SYSTEM_OVERLAY_WINDOW', // Android only
 }
 
 export enum PermissionStatus {
@@ -48,6 +49,7 @@ type TwilioPhoneType = {
   deactivateAudio(): void; // iOS only
   checkPermissions(callback: (permissions: Permissions) => void): void;
   showCallNotification(payload: Record<string, any>,): void;
+  requestWindowsDrawPermission():void;
 };
 
 const TwilioPhone = NativeModules.TwilioPhone as TwilioPhoneType;
