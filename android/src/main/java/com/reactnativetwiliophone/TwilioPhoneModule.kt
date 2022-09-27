@@ -67,7 +67,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
   fun showCallNotification(payload: ReadableMap) {
-      ViewUtils.showCallView(reactApplicationContext, payload);
+      ViewUtils.showCallView(reactApplicationContext,payload);
   //  NotificationUtils.showCallNotification(reactApplicationContext, payload, Const.NOTIFICATION_ID)
   }
 
