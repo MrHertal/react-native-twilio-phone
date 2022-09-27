@@ -3,12 +3,12 @@ package com.reactnativetwiliophone.callView
 import android.app.ActivityManager
 import android.app.Service
 import android.content.Context
-import android.graphics.PixelFormat
 import android.os.Build
 import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import com.reactnativetwiliophone.log
 
 
 open class BaseView(
@@ -46,20 +46,25 @@ open class BaseView(
     if (procInfos != null) {
       for (processInfo in procInfos) {
         if (processInfo.processName.equals(mContext?.packageName)) {
-          Log.v("callMyService", "app BaseView running = true");
+          log("app BaseView running = true")
+
           return true
         }
       }
     }
-    Log.v("callMyService", "app BaseView NOT running = false");
+    log("app BaseView NOT running = false")
+
     return false
   }
     protected fun remove(view: View) {
         tryOnly {
            if (view.visibility == View.VISIBLE){
-            View.INVISIBLE
-             }
-            windowManager!!.removeView(view)
+             View.GONE
+             log("remove  on View.GONE")
+
+           }
+          windowManager!!.removeView(view)
+          log("remove  on removeView")
 
         }
     }

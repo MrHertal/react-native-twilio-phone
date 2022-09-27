@@ -2,10 +2,10 @@ package com.reactnativetwiliophone.callView
 
 import android.app.ActivityManager
 import android.app.Service
-import android.content.ComponentName
 import android.content.Context
-import android.content.pm.PackageManager
-import android.util.Log
+import android.content.Intent
+import com.reactnativetwiliophone.Actions
+import com.reactnativetwiliophone.log
 
 abstract class ViewServiceConfig : Service() {
 
@@ -14,12 +14,18 @@ abstract class ViewServiceConfig : Service() {
     // lifecycle -----------------------------------------------------------------------------------
 
     override fun onDestroy() {
+      log("====================== onDestroy  ViewServiceConfig")
+
         tryRemoveAllView()
         super.onDestroy()
     }
 
     // override ------------------------------------------------------------------------------------
 
+  override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+      return START_STICKY
+  }
 
     open fun setupCallView(action: CallView.Action): CallView.Builder? = null
 
@@ -29,10 +35,12 @@ abstract class ViewServiceConfig : Service() {
         callView = setupCallView(customCallViewListener)
             ?.build()
 
-        onMainThread {
+
+
+       // onMainThread {
           tryShowCallView()
 
-      }
+     // }
     }
 
   protected fun isAppRunning(): Boolean {
@@ -43,12 +51,12 @@ abstract class ViewServiceConfig : Service() {
     if (procInfos != null) {
       for (processInfo in procInfos) {
         if (processInfo.processName.equals(this.packageName)) {
-          Log.v("callMyService", "app ViewServiceConfig running = true");
+          log( "app ViewServiceConfig running = true");
           return true
         }
       }
     }
-    Log.v("callMyService", "app ViewServiceConfig NOT running = false");
+    log( "app ViewServiceConfig NOT running = false");
     return false
   }
     // private func --------------------------------------------------------------------------------
@@ -69,10 +77,10 @@ abstract class ViewServiceConfig : Service() {
             }
     }
 
-
     public fun tryStopService() {
-
+        //ViewService().doUnbindService()
         tryRemoveAllView()
+        stopForeground(true)
         stopSelf()
     }
 
@@ -84,12 +92,13 @@ abstract class ViewServiceConfig : Service() {
     // shorten -------------------------------------------------------------------------------------
 
     private fun tryRemoveCallView() = logIfError {
-        callView!!.remove()
+      callView?.remove()
     }
 
     private fun tryShowCallView() = logIfError {
         callView!!.show()
     }
+
 
 
 }

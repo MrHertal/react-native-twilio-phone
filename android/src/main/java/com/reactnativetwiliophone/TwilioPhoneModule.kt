@@ -1,6 +1,7 @@
 package com.reactnativetwiliophone
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.util.Log
@@ -32,7 +33,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun register(accessToken: String, deviceToken: String) {
     Log.i(tag, "Registering")
-
+    StaticConst.IS_RUNNING=true
     Voice.register(
       accessToken,
       Voice.RegistrationChannel.FCM,
@@ -66,8 +67,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
   fun showCallNotification(payload: ReadableMap) {
-      val acitivity=currentActivity
-      ViewUtils.showCallView(acitivity!!,reactApplicationContext,payload);
+      ViewUtils.showCallView(reactApplicationContext,payload);
   //  NotificationUtils.showCallNotification(reactApplicationContext, payload, Const.NOTIFICATION_ID)
   }
 

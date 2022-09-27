@@ -4,9 +4,11 @@ import android.app.PendingIntent
 import android.app.PendingIntent.*
 import android.content.*
 import android.os.Bundle
-import com.facebook.react.HeadlessJsTaskService
 import androidx.core.app.NotificationManagerCompat
+import com.facebook.react.HeadlessJsTaskService
+import com.reactnativetwiliophone.Actions
 import com.reactnativetwiliophone.Const
+import com.reactnativetwiliophone.log
 
 class NotificationsBroadcastReceiver : BroadcastReceiver() {
 
@@ -50,6 +52,10 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
                         val notificationManager = NotificationManagerCompat.from(context)
                         notificationManager.cancel(notificationId)
                     }
+                  if(intent.action== Actions.STOP.name){
+                    log("Starting the service in NotificationsBroadcastReceiver")
+                    context.stopService(intent)
+                  }
                 }catch (ignored: IllegalStateException){
                 }
             }
