@@ -45,6 +45,12 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
                     notification.putInt("notificationId", notificationId)
                     headlessIntent.putExtra(Const.EXTRA_NOTIFIER, notification)
                     val name: ComponentName? = context.startService(headlessIntent)
+                  if(action == "answered") {
+
+                  }
+                  if(action == "rejected") {
+
+                  }
                     if (name != null) {
                         HeadlessJsTaskService.acquireWakeLockNow(context)
                     }

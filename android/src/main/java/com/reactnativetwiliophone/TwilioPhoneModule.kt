@@ -130,6 +130,9 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
     activeCalls[callSid] = call
     activeCallInvites.remove(callSid)
+    val params = Arguments.createMap()
+    params.putString("callSid", callSid)
+    sendEvent(reactApplicationContext, "CallConnected", params)
   }
 
   @ReactMethod

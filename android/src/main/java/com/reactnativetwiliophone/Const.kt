@@ -26,6 +26,7 @@ object Const {
   const val REJECT = "reject"
   const val ANSWER = "answer"
   const val CALLER_NAME = "callerName"
+  const val CALL_SID = "callSid"
   val REQ_CODE_PERMISSION_SYSTEM_OVERLAY_WINDOW=11
 
   const val KEY_STRING_VIDEO_URL = "video_url"

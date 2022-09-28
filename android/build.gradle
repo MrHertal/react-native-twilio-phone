@@ -127,16 +127,6 @@ dependencies {
   // noinspection GradleDynamicVersion
   implementation 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'com.github.kittinunf.fuel:fuel:2.1.0'
-  implementation 'com.github.kittinunf.fuel:fuel-android:2.1.0'
-  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
-  implementation "com.android.support:support-core-utils:28.0.0"
-  implementation 'androidx.appcompat:appcompat:1.5.1'
-  implementation "androidx.core:core:1.9.0"
+
   implementation 'com.twilio:voice-android:6.0.7'
-  implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-  implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-  implementation 'androidx.lifecycle:lifecycle-compiler:2.5.1'
-  //implementation 'com.github.saeed-younus.overlay-service:overlayservice:1.13'
- // implementation 'com.github.saeed-younus.overlay-service:helper:1.13'
 }

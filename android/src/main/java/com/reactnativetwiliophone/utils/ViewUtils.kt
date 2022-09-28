@@ -27,30 +27,24 @@ object ViewUtils {
   @SuppressLint("SuspiciousIndentation")
   fun showCallView(context: Context, data: ReadableMap) {
     val callerName = data.getString(Const.CALLER_NAME)
+    val callSid = data.getString(Const.CALL_SID)
 
     if (checkFloatingWindowPermission(context)) {
-      /* context.packageManager?.setComponentEnabledSetting(
-         cmp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-         PackageManager.DONT_KILL_APP
-       )*/
       if (callerName != null) {
         val intent = Intent(context, ViewService::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.addFlags(FLAG_ACTIVITY_NO_HISTORY)
         intent.putExtra(Const.CALLER_NAME, callerName)
+        intent.putExtra(Const.CALL_SID, callSid)
         intent.action = Actions.START.name
-        //context.startService(intent);
         ContextCompat.startForegroundService(context, intent)
         context.bindService(intent, ViewService().connection, 0);
-       // ViewService().doBindService(intent)
       }
     }
-
   }
 
 
-
-  public fun actionOnService(action: Actions, context: Context, callerName: String) {
+    public fun actionOnService(action: Actions, context: Context, callerName: String) {
 
     //if(checkServiceRunning(CallViewService::class.java,context)){
      // log("============================ service was connected will closed =================");
