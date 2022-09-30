@@ -4,7 +4,7 @@ import android.os.Handler
 import android.os.Looper
 
 
-internal inline fun onMainThreadsss(crossinline doWork: () -> Unit) {
+internal inline fun onMainThread(crossinline doWork: () -> Unit) {
     Handler(Looper.getMainLooper()).post {
         doWork()
     }

@@ -59,7 +59,7 @@ open class BaseView(
     protected fun remove(view: View) {
         tryOnly {
            if (view.visibility == View.VISIBLE){
-             View.GONE
+             View.INVISIBLE
              log("remove  on View.GONE")
 
            }
@@ -94,17 +94,6 @@ open class BaseView(
                 // for android version lower than 8
                 WindowManager.LayoutParams.TYPE_PHONE
               }
-            /*    format = PixelFormat.TRANSLUCENT
-                flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-               flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-
-                type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                } else {
-                    // for android version lower than 8
-                    WindowManager.LayoutParams.TYPE_PHONE
-                }*/
             }
 
         }

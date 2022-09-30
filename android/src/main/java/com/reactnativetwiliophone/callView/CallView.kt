@@ -38,7 +38,6 @@ class CallView(
      //   builder.listener.onCloseCallView()
     }
 
-
     // private -------------------------------------------------------------------------------------
 
     override fun setupLayoutParams() {

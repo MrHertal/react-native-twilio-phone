@@ -4,13 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioManager
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
-import com.reactnativetwiliophone.Const.NOTIFICATION_ID
-import com.reactnativetwiliophone.utils.NotificationUtils
+import com.reactnativetwiliophone.callView.ViewService
 import com.reactnativetwiliophone.utils.ViewUtils
 import com.twilio.voice.*
 
@@ -18,7 +16,6 @@ import com.twilio.voice.*
 class TwilioPhoneModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
-  private val tag = "TwilioPhone"
   private var activeCallInvites = mutableMapOf<String, CallInvite>()
   private var activeCalls = mutableMapOf<String, Call>()
   private var callListener = callListener()
@@ -27,12 +24,12 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
     reactContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
   override fun getName(): String {
-    return "TwilioPhone"
+    return Const.MODULE_NAME
   }
 
   @ReactMethod
   fun register(accessToken: String, deviceToken: String) {
-    Log.i(tag, "Registering")
+    log( "Registering")
     StaticConst.IS_RUNNING=true
     Voice.register(
       accessToken,
@@ -40,19 +37,19 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
       deviceToken,
       object : RegistrationListener {
         override fun onRegistered(accessToken: String, fcmToken: String) {
-          Log.d(tag, "Successfully registered FCM token")
+          log("Successfully registered FCM token")
 
-          sendEvent(reactApplicationContext, "RegistrationSuccess", null)
+          sendEvent(reactApplicationContext, Const.REGISTER_SUCCESS, null)
         }
 
         override fun onError(error: RegistrationException, accessToken: String, fcmToken: String) {
-          Log.e(tag, "Registration error: ${error.errorCode}, ${error.message}")
+          log( "Registration error: ${error.errorCode}  ${error.message}")
 
           val params = Arguments.createMap()
-          params.putInt("errorCode", error.errorCode)
-          params.putString("errorMessage", error.message)
+          params.putInt(Const.ERROR_CODE, error.errorCode)
+          params.putString(Const.ERROR_MESSAGE, error.message)
 
-          sendEvent(reactApplicationContext, "RegistrationFailure", params)
+          sendEvent(reactApplicationContext, Const.REGISTER_FAILURE, params)
         }
       })
   }
@@ -67,62 +64,62 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
   fun showCallNotification(payload: ReadableMap) {
+      log( "show incomming call ------------------------------")
       ViewUtils.showCallView(reactApplicationContext,payload);
-  //  NotificationUtils.showCallNotification(reactApplicationContext, payload, Const.NOTIFICATION_ID)
   }
 
   @ReactMethod
   fun handleMessage(payload: ReadableMap) {
-    Log.i(tag, "Handling message")
+    log( "Handling message")
 
     val data = Arguments.toBundle(payload)
 
     if (data == null) {
-      Log.e(tag, "The message was not a valid Twilio Voice SDK payload")
+      log( "The message was not a valid Twilio Voice SDK payload")
       return
     }
     val valid = Voice.handleMessage(reactApplicationContext, data, object : MessageListener {
       override fun onCallInvite(callInvite: CallInvite) {
-        Log.d(tag, "Call invite received")
+        log( "Call invite received")
         activeCallInvites[callInvite.callSid] = callInvite
 
         val from = callInvite.from ?: ""
-        val caller = from.replace("client:", "")
+        val caller = from.replace(Const.CLIENT, "")
         val params = Arguments.createMap()
-        params.putString("callSid", callInvite.callSid)
-        params.putString("from", caller)
+        params.putString(Const.CALL_SID, callInvite.callSid)
+        params.putString(Const.FROM, caller)
         val pushData = Arguments.createMap()
-        pushData.putString("callerName", caller)
-        pushData.putString("callSid", callInvite.callSid)
+        pushData.putString(Const.CALLER_NAME, caller)
+        pushData.putString(Const.CALL_SID, callInvite.callSid)
         showCallNotification(pushData)
-        sendEvent(reactApplicationContext, "CallInvite", params)
+        sendEvent(reactApplicationContext, Const.CALL_INVITE, params)
       }
 
       override fun onCancelledCallInvite(
         cancelledCallInvite: CancelledCallInvite,
         callException: CallException?
       ) {
-        Log.d(tag, "Cancelled call invite received")
-
+        log( "Cancelled call invite received")
+        ViewService().stopService()
         activeCallInvites.remove(cancelledCallInvite.callSid)
         val params = Arguments.createMap()
-        params.putString("callSid", cancelledCallInvite.callSid)
-        NotificationUtils.cancelPushNotification(reactApplicationContext, NOTIFICATION_ID)
-        sendEvent(reactApplicationContext, "CancelledCallInvite", params)
+        params.putString(Const.CALL_SID, cancelledCallInvite.callSid)
+        ViewService().cancelPushNotification(reactApplicationContext)
+        sendEvent(reactApplicationContext, Const.CANCELLED_CALL_INVITE, params)
       }
     })
 
     if (!valid) {
-      Log.e(tag, "The message was not a valid Twilio Voice SDK payload")
+      log( "The message was not a valid Twilio Voice SDK payload")
     }
   }
 
   @ReactMethod
   fun acceptCallInvite(callSid: String) {
-    Log.i(tag, "Accepting call invite")
+    log( "Accepting call invite")
 
     if (activeCallInvites[callSid] == null) {
-      Log.e(tag, "No call invite to be accepted")
+      log( "No call invite to be accepted")
       return
     }
 
@@ -130,14 +127,17 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
     activeCalls[callSid] = call
     activeCallInvites.remove(callSid)
+    val params = Arguments.createMap()
+    params.putString(Const.CALL_SID, callSid)
+    sendEvent(reactApplicationContext, Const.CANCELLED_CONNECTED, params)
   }
 
   @ReactMethod
   fun rejectCallInvite(callSid: String) {
-    Log.i(tag, "Rejecting call invite")
+    log( "Rejecting call invite")
 
     if (activeCallInvites[callSid] == null) {
-      Log.e(tag, "No call invite to be rejected")
+      log( "No call invite to be rejected")
       return
     }
 
@@ -148,10 +148,10 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun disconnectCall(callSid: String) {
-    Log.i(tag, "Disconnecting call")
+    log( "Disconnecting call")
 
     if (activeCalls[callSid] == null) {
-      Log.e(tag, "No call to be disconnected")
+      log( "No call to be disconnected")
       return
     }
 
@@ -160,7 +160,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun endCall(callSid: String) {
-    Log.i(tag, "Ending call")
+    log( "Ending call")
 
     if (activeCallInvites[callSid] != null) {
       activeCallInvites[callSid]!!.reject(reactApplicationContext)
@@ -173,12 +173,12 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
       return
     }
 
-    Log.e(tag, "Unknown sid to perform end-call action with")
+    log( "Unknown sid to perform end-call action with")
   }
 
   @ReactMethod
   fun toggleMuteCall(callSid: String, mute: Boolean) {
-    Log.i(tag, "Toggling mute call")
+    log( "Toggling mute call")
 
     val activeCall = activeCalls[callSid] ?: return
 
@@ -187,7 +187,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun toggleHoldCall(callSid: String, hold: Boolean) {
-    Log.i(tag, "Toggling hold call")
+    log( "Toggling hold call")
 
     val activeCall = activeCalls[callSid] ?: return
 
@@ -196,13 +196,13 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun toggleSpeaker(speakerOn: Boolean) {
-    Log.i(tag, "Toggling speaker")
+    log( "Toggling speaker")
     audioManager.isSpeakerphoneOn = speakerOn
   }
 
   @ReactMethod
   fun sendDigits(callSid: String, digits: String) {
-    Log.i(tag, "Sending digits")
+    log( "Sending digits")
 
     val activeCall = activeCalls[callSid] ?: return
 
@@ -211,7 +211,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun startCall(accessToken: String, params: ReadableMap) {
-    Log.i(tag, "Starting call")
+    log( "Starting call")
 
     val connectParams = mutableMapOf<String, String>()
 
@@ -228,7 +228,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun unregister(accessToken: String, deviceToken: String) {
-    Log.i(tag, "Unregistering")
+    log( "Unregistering")
 
     Voice.unregister(
       accessToken,
@@ -236,26 +236,26 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
       deviceToken,
       object : UnregistrationListener {
         override fun onUnregistered(accessToken: String, fcmToken: String) {
-          Log.d(tag, "Successfully unregistered FCM token")
+          log( "Successfully unregistered FCM token")
 
-          sendEvent(reactApplicationContext, "UnregistrationSuccess", null)
+          sendEvent(reactApplicationContext, Const.UNREGISTER_SUCCESS, null)
         }
 
         override fun onError(error: RegistrationException, accessToken: String, fcmToken: String) {
-          Log.e(tag, "Unregistration error: ${error.errorCode}, ${error.message}")
+          log("Unregistration error: ${error.errorCode} ${error.message}")
 
           val params = Arguments.createMap()
-          params.putInt("errorCode", error.errorCode)
-          params.putString("errorMessage", error.message)
+          params.putInt(Const.ERROR_CODE, error.errorCode)
+          params.putString(Const.ERROR_MESSAGE, error.message)
 
-          sendEvent(reactApplicationContext, "UnregistrationFailure", params)
+          sendEvent(reactApplicationContext, Const.UNREGISTER_FAILURE, params)
         }
       })
   }
 
   @ReactMethod
   fun checkPermissions(callback: Callback) {
-    Log.i(tag, "Checking permissions")
+    log( "Checking permissions")
 
     val permissionsToRequest = mutableListOf<String>()
 
@@ -268,10 +268,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
     if (callPhone != "GRANTED") {
       permissionsToRequest.add(android.Manifest.permission.CALL_PHONE)
     }
-  //  val overlayWindow = checkPermission(Const.SYSTEM_OVERLAY_WINDOW)
-   // if (overlayWindow != "GRANTED") {
-  //    permissionsToRequest.add(Const.SYSTEM_OVERLAY_WINDOW)
-  //  }
+
     if (permissionsToRequest.isNotEmpty()) {
       currentActivity?.let {
         ActivityCompat.requestPermissions(
@@ -285,7 +282,6 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
     val permissions = Arguments.createMap()
     permissions.putString("RECORD_AUDIO", recordAudio)
     permissions.putString("CALL_PHONE", callPhone)
-   // permissions.putString("SYSTEM_OVERLAY_WINDOW", overlayWindow)
 
     callback(permissions)
   }
@@ -326,7 +322,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
        * raised, irrespective of the value of answerOnBridge being set to true or false
        */
       override fun onRinging(call: Call) {
-        Log.d(tag, "Call did start ringing")
+        log( "Call did start ringing")
         /*
          * When [answerOnBridge](https://www.twilio.com/docs/voice/twiml/dial#answeronbridge)
          * is enabled in the <Dial> TwiML verb, the caller will not hear the ringback while
@@ -338,66 +334,68 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         activeCalls[call.sid!!] = call
 
         val params = Arguments.createMap()
-        params.putString("callSid", call.sid)
+        params.putString(Const.CALL_SID, call.sid)
 
-        sendEvent(reactApplicationContext, "CallRinging", params)
+        sendEvent(reactApplicationContext, Const.CALL_RINGING, params)
       }
 
       override fun onConnectFailure(call: Call, error: CallException) {
-        Log.e(tag, "Call failed to connect: ${error.errorCode}, ${error.message}")
+        log( "Call failed to connect: ${error.errorCode}, ${error.message}")
 
         val params = Arguments.createMap()
-        params.putString("callSid", call.sid)
-        params.putInt("errorCode", error.errorCode)
-        params.putString("errorMessage", error.message)
+        params.putString(Const.CALL_SID, call.sid)
+        params.putInt(Const.ERROR_CODE, error.errorCode)
+        params.putString(Const.ERROR_MESSAGE, error.message)
 
-        sendEvent(reactApplicationContext, "CallConnectFailure", params)
+        sendEvent(reactApplicationContext, Const.CALL_CONNECT_FAILURE, params)
       }
 
       override fun onConnected(call: Call) {
-        Log.d(tag, "Call did connect")
+        log( "Call did connect")
 
         val params = Arguments.createMap()
         params.putString("callSid", call.sid)
 
-        sendEvent(reactApplicationContext, "CallConnected", params)
+        sendEvent(reactApplicationContext, Const.CALL_CONNECTED, params)
       }
 
       override fun onReconnecting(call: Call, error: CallException) {
-        Log.e(tag, "Call is reconnecting with error: ${error.errorCode}, ${error.message}")
+        log( "Call is reconnecting with error: ${error.errorCode}, ${error.message}")
+        log("Unregistration error: ${error.errorCode} ${error.message}")
+
 
         val params = Arguments.createMap()
-        params.putString("callSid", call.sid)
-        params.putInt("errorCode", error.errorCode)
-        params.putString("errorMessage", error.message)
+        params.putString(Const.CALL_SID, call.sid)
+        params.putInt(Const.ERROR_CODE, error.errorCode)
+        params.putString(Const.ERROR_MESSAGE, error.message)
 
-        sendEvent(reactApplicationContext, "CallReconnecting", params)
+        sendEvent(reactApplicationContext, Const.CALL_CONNECTING, params)
       }
 
       override fun onReconnected(call: Call) {
-        Log.d(tag, "Call did reconnect")
+        log( "Call did reconnect")
 
         val params = Arguments.createMap()
-        params.putString("callSid", call.sid)
+        params.putString(Const.CALL_SID, call.sid)
 
-        sendEvent(reactApplicationContext, "CallReconnected", params)
+        sendEvent(reactApplicationContext, Const.CALL_CONNECTED, params)
       }
 
       override fun onDisconnected(call: Call, error: CallException?) {
         val params = Arguments.createMap()
-        params.putString("callSid", call.sid)
+        params.putString(Const.CALL_SID, call.sid)
 
         if (error != null) {
-          Log.e(tag, "Call disconnected with error: ${error.errorCode}, ${error.message}")
+          log( "Call disconnected with error: ${error.errorCode}${error.message}")
 
-          params.putInt("errorCode", error.errorCode)
-          params.putString("errorMessage", error.message)
+          params.putInt(Const.ERROR_CODE, error.errorCode)
+          params.putString(Const.ERROR_MESSAGE, error.message)
 
-          sendEvent(reactApplicationContext, "CallDisconnectedError", params)
+          sendEvent(reactApplicationContext, Const.CALL_CONNECTED_ERROR, params)
         } else {
-          Log.d(tag, "Call disconnected")
+          log( "Call disconnected")
 
-          sendEvent(reactApplicationContext, "CallDisconnected", params)
+          sendEvent(reactApplicationContext, Const.CALL_DISCONNECTED, params)
         }
       }
     }
