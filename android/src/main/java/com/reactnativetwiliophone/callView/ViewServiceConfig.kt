@@ -55,7 +55,7 @@ abstract class ViewServiceConfig : Service() {
 
   public fun tryStopService() {
     tryRemoveAllView()
-    stopForeground(true)
+   // stopForeground(true)
     stopSelf()
   }
 

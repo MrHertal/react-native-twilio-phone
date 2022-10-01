@@ -7,6 +7,7 @@ import android.content.*
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.*
+import android.telephony.ServiceState
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
@@ -117,10 +118,10 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
       mStartId = startId
       extras = intent.extras
       log("using an intent with action $action")
-      if (action === Actions.STOP.name) {
-        stopSelf()
-        stopSelfResult(startId)
-      } else {
+     // if (action === Actions.STOP.name) {
+      //  stopSelf()
+      //  stopSelfResult(startId)
+     // } else {
         if (isDrawOverlaysPermissionGranted()) {
           setupViewAppearance()
           if (isHigherThanAndroid8()) {
@@ -130,18 +131,20 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
           }
 
         } else throw PermissionDeniedException()
-        startService()
-      }
+    //  }
     }
     return START_STICKY;
   }
 
-  override fun setupCallView(action: CallView.Action): CallView.Builder? {
-    val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    val layout = inflater.inflate(R.layout.call_view, null)
+  override fun onCreate() {
+    super.onCreate()
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       startViewForeground()
     }
+  }
+  override fun setupCallView(action: CallView.Action): CallView.Builder? {
+    val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val layout = inflater.inflate(R.layout.call_view, null)
     val textView: TextView = layout.findViewById(R.id.callerNameV)
     if (extras != null) {
       textView.text = extras!!.getString(Const.CALLER_NAME)
@@ -204,41 +207,40 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
 
   override fun onDestroy() {
     log("====================== onDestroy  ViewService")
-     stopService()
+     stopService(this)
   }
   override fun onTaskRemoved(rootIntent: Intent?) {
-    stopService()
+    stopService(this)
     log("======================== onTaskRemoved =====================")
     super.onTaskRemoved(rootIntent)
   }
 
-  private  fun startService() {
-    if (isServiceStarted) {
-      log("Starting the foreground service task")
-      return
-    }
-    isServiceStarted = true
-    setServiceState(this, ServiceState.STARTED)
-  }
 
-  fun stopService() {
+  fun stopService(context:Context) {
       try {
 
         doUnbindService()
-        Thread.currentThread().interrupt();
-        mNotificationManager!!.cancel(Const.NOTIFICATION_ID)
+        log("stop service 1")
+
+        // Thread.currentThread().interrupt();
+       // mNotificationManager!!.cancel(Const.NOTIFICATION_ID)
         //stopForeground(STOP_FOREGROUND_REMOVE)
-        stopForeground(true)
-        stopSelfResult(mStartId);
+       // stopForeground(true)
+        log("stop service 2")
+        //stopSelfResult(mStartId);
         tryStopService();
-        val closeIntent = Intent(this, this::class.java)
-        closeIntent.action = Actions.STOP.name
+        log("stop service 3")
+        val closeIntent = Intent(context, ViewService::class.java)
+        log("stop service 5")
         stopService(closeIntent)
+        log("success stop service")
       } catch (e: Exception) {
+        log("Error stop service A${e.toString()}")
+
         tryStopService()
       }
       isServiceStarted = false
-      setServiceState(this, ServiceState.STOPPED)
+      //setServiceState(this, ServiceState.STOPPED)
 
   }
 
@@ -270,7 +272,7 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
         HeadlessJsTaskService.acquireWakeLockNow(this)
       }
       log("finish service A")
-      stopService()
+      stopService(this)
     } catch (e: java.lang.Exception) {
       log("Exception =$e")
       stopService(Intent(this, ViewService::class.java))

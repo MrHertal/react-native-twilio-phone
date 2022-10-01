@@ -100,7 +100,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         callException: CallException?
       ) {
         log( "Cancelled call invite received")
-        ViewService().stopService()
+        ViewUtils.stopService(reactApplicationContext)
         activeCallInvites.remove(cancelledCallInvite.callSid)
         val params = Arguments.createMap()
         params.putString(Const.CALL_SID, cancelledCallInvite.callSid)
