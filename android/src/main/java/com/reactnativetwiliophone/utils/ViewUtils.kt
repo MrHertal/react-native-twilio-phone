@@ -18,7 +18,7 @@ import com.reactnativetwiliophone.log
 
 
 object ViewUtils {
- var serviceIntent: Intent? = null
+  var serviceIntent: Intent? = null
 
   @SuppressLint("SuspiciousIndentation")
   fun showCallView(context: Context, data: ReadableMap) {
@@ -28,7 +28,7 @@ object ViewUtils {
 
     if (checkFloatingWindowPermission(context)) {
       if (callerName != null) {
-        serviceIntent= Intent(context, ViewService::class.java)
+        serviceIntent = Intent(context, ViewService::class.java)
         serviceIntent!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         serviceIntent!!.addFlags(FLAG_ACTIVITY_NO_HISTORY)
         serviceIntent!!.putExtra(Const.CALLER_NAME, callerName)

@@ -13,69 +13,69 @@ import java.lang.ref.WeakReference
 
 internal object ScreenInfo {
 
-    private val api: Api =
-        when {
-            // android 4 to 5
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.R -> ApiLevel23()
-            // android 11 and above
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> ApiLevel30()
-            // android 5 to 11
-            else -> Api()
-        }
-
-    /**
-     * Returns screen size in pixels.
-     */
-    fun getScreenSize(context: Context): Size {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-          WeakReference(context).get()?.let {
-
-              api.getScreenSize(it)
-
-          } ?: Size(0, 0)
-        } else {
-          TODO("VERSION.SDK_INT < LOLLIPOP")
-        }
+  private val api: Api =
+    when {
+      // android 4 to 5
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.R -> ApiLevel23()
+      // android 11 and above
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> ApiLevel30()
+      // android 5 to 11
+      else -> Api()
     }
 
-    private open class Api {
+  /**
+   * Returns screen size in pixels.
+   */
+  fun getScreenSize(context: Context): Size {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      WeakReference(context).get()?.let {
 
-        // api level 21 to 23
-        open fun getScreenSize(context: Context): Size {
+        api.getScreenSize(it)
 
-            val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            val display: Display = wm.defaultDisplay
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-              Size(display.width, display.height)
-            } else {
-              TODO("VERSION.SDK_INT < LOLLIPOP")
-            }
-
-        }
+      } ?: Size(0, 0)
+    } else {
+      TODO("VERSION.SDK_INT < LOLLIPOP")
     }
+  }
 
-    @RequiresApi(Build.VERSION_CODES.R)
-    private class ApiLevel30 : Api() {
-        override fun getScreenSize(context: Context): Size {
-            val metrics: WindowMetrics =
-                context.getSystemService(WindowManager::class.java).currentWindowMetrics
-            return Size(metrics.bounds.width(), metrics.bounds.height())
-        }
-    }
+  private open class Api {
 
-    // api level 23 to 30
-    private class ApiLevel23 : Api() {
-        @RequiresApi(Build.VERSION_CODES.M)
-        override fun getScreenSize(context: Context): Size {
-            val display = context.getSystemService(WindowManager::class.java).defaultDisplay
-            val metrics = if (display != null) {
-                DisplayMetrics().also { display.getRealMetrics(it) }
-            } else {
-                Resources.getSystem().displayMetrics
-            }
-            return Size(metrics.widthPixels, metrics.heightPixels)
-        }
+    // api level 21 to 23
+    open fun getScreenSize(context: Context): Size {
+
+      val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+      val display: Display = wm.defaultDisplay
+      return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        Size(display.width, display.height)
+      } else {
+        TODO("VERSION.SDK_INT < LOLLIPOP")
+      }
+
     }
+  }
+
+  @RequiresApi(Build.VERSION_CODES.R)
+  private class ApiLevel30 : Api() {
+    override fun getScreenSize(context: Context): Size {
+      val metrics: WindowMetrics =
+        context.getSystemService(WindowManager::class.java).currentWindowMetrics
+      return Size(metrics.bounds.width(), metrics.bounds.height())
+    }
+  }
+
+  // api level 23 to 30
+  private class ApiLevel23 : Api() {
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun getScreenSize(context: Context): Size {
+      val display = context.getSystemService(WindowManager::class.java).defaultDisplay
+      val metrics = if (display != null) {
+        DisplayMetrics().also { display.getRealMetrics(it) }
+      } else {
+        Resources.getSystem().displayMetrics
+      }
+      return Size(metrics.widthPixels, metrics.heightPixels)
+    }
+  }
 
 
 }

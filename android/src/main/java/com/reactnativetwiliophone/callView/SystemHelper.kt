@@ -10,25 +10,25 @@ import android.view.View
 private var exclusionRects: MutableList<Rect> = ArrayList()
 
 internal fun View.updateGestureExclusion(context: Context) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
+  if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
 
 
-    val screenSize = ScreenInfo.getScreenSize(context.applicationContext)
+  val screenSize = ScreenInfo.getScreenSize(context.applicationContext)
 
-    exclusionRects.clear()
+  exclusionRects.clear()
 
-    val rect = Rect(0, 0, this.width, screenSize.height)
-    exclusionRects.add(rect)
+  val rect = Rect(0, 0, this.width, screenSize.height)
+  exclusionRects.add(rect)
 
 
-    this.systemGestureExclusionRects = exclusionRects
+  this.systemGestureExclusionRects = exclusionRects
 }
 
 fun Context.isDrawOverlaysPermissionGranted(): Boolean {
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-        return true
-    }
+  if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+    return true
+  }
 
-    return Settings.canDrawOverlays(this)
+  return Settings.canDrawOverlays(this)
 }

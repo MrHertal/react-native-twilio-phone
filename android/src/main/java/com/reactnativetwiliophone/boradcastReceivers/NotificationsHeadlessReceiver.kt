@@ -15,25 +15,25 @@ import com.reactnativetwiliophone.log
 
 class NotificationsHeadlessReceiver : HeadlessJsTaskService() {
 
-    @Nullable
-    override fun getTaskConfig(intent: Intent): HeadlessJsTaskConfig? {
-        val extras: Bundle? = intent.extras
-        if (extras != null) {
-            val notification =
-                    intent.getBundleExtra(Const.EXTRA_NOTIFIER)
-            val notificationMap: WritableMap = Arguments.fromBundle(notification)
-            notification?.let {
-             // stopViewService(intent)
+  @Nullable
+  override fun getTaskConfig(intent: Intent): HeadlessJsTaskConfig? {
+    val extras: Bundle? = intent.extras
+    if (extras != null) {
+      val notification =
+        intent.getBundleExtra(Const.EXTRA_NOTIFIER)
+      val notificationMap: WritableMap = Arguments.fromBundle(notification)
+      notification?.let {
+        // stopViewService(intent)
 
-                return HeadlessJsTaskConfig(
-                        "NotificationsListenerTask",
-                        notificationMap,
-                        5000,  // timeout for the task
-                        true // optional: defines whether or not  the task is allowed in foreground. Default is false
-                )
-            }
-        }
-        return null
+        return HeadlessJsTaskConfig(
+          "NotificationsListenerTask",
+          notificationMap,
+          5000,  // timeout for the task
+          true // optional: defines whether or not  the task is allowed in foreground. Default is false
+        )
+      }
+    }
+    return null
   }
 }
 

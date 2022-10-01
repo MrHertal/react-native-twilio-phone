@@ -12,32 +12,33 @@ import com.reactnativetwiliophone.log
 
 
 open class BaseView(
-    context: Context
+  context: Context
 ) : Logger by LoggerImpl() {
 
-    var windowManager: WindowManager? = null
-    var windowParams: WindowManager.LayoutParams? = null
+  var windowManager: WindowManager? = null
+  var windowParams: WindowManager.LayoutParams? = null
   var mContext: Context? = null
 
-    init {
-        windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
-        windowParams = WindowManager.LayoutParams()
-        mContext=context
+  init {
+    windowManager = context.getSystemService(Service.WINDOW_SERVICE) as WindowManager
+    windowParams = WindowManager.LayoutParams()
+    mContext = context
+  }
+
+  // public --------------------------------------------------------------------------------------
+
+  protected fun show(view: View) {
+    logIfError {
+
+      if (view.getParent() != null) {
+        Log.v("callMyService", "REMOVE! view in BaseView view.getParent not null");
+        windowManager!!.removeView(view)
+      }
+      windowManager!!.addView(view, windowParams)
+
     }
+  }
 
-    // public --------------------------------------------------------------------------------------
-
-    protected fun show(view: View) {
-        logIfError {
-
-            if (view.getParent() != null) {
-              Log.v("callMyService", "REMOVE! view in BaseView view.getParent not null");
-              windowManager!!.removeView(view)
-            }
-            windowManager!!.addView(view, windowParams)
-
-        }
-    }
   fun isAppRunning(): Boolean {
     val activityManager: ActivityManager =
       mContext?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -56,47 +57,48 @@ open class BaseView(
 
     return false
   }
-    protected fun remove(view: View) {
-        tryOnly {
-           if (view.visibility == View.VISIBLE){
-             View.INVISIBLE
-             log("remove  on View.GONE")
 
-           }
-          windowManager!!.removeView(view)
-          log("remove  on removeView")
+  protected fun remove(view: View) {
+    tryOnly {
+      if (view.visibility == View.VISIBLE) {
+        View.INVISIBLE
+        log("remove  on View.GONE")
 
-        }
+      }
+      windowManager!!.removeView(view)
+      log("remove  on removeView")
+
     }
+  }
 
-    protected fun update(view: View) {
-        logIfError {
-            windowManager!!.updateViewLayout(view, windowParams)
-        }
+  protected fun update(view: View) {
+    logIfError {
+      windowManager!!.updateViewLayout(view, windowParams)
     }
+  }
 
 
-    // override ------------------------------------------------------------------------------------
+  // override ------------------------------------------------------------------------------------
 
-    open fun setupLayoutParams() {
+  open fun setupLayoutParams() {
 
-        logIfError {
+    logIfError {
 
-            windowParams!!.apply {
-                width = WindowManager.LayoutParams.WRAP_CONTENT
-                height = WindowManager.LayoutParams.WRAP_CONTENT
-              flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                gravity = Gravity.CENTER
-              type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-              } else {
-                // for android version lower than 8
-                WindowManager.LayoutParams.TYPE_PHONE
-              }
-            }
-
+      windowParams!!.apply {
+        width = WindowManager.LayoutParams.WRAP_CONTENT
+        height = WindowManager.LayoutParams.WRAP_CONTENT
+        flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+          WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        gravity = Gravity.CENTER
+        type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+          WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        } else {
+          // for android version lower than 8
+          WindowManager.LayoutParams.TYPE_PHONE
         }
+      }
+
     }
+  }
 
 }

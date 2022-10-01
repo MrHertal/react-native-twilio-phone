@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-  android:background="@drawable/layout_bg"
-    android:layout_height="wrap_content">
+             android:layout_width="wrap_content"
+             android:background="@drawable/layout_bg"
+             android:layout_height="wrap_content">
 
-    <!--Root container-->
+  <!--Root container-->
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/root_container"
-        android:orientation="vertical">
-        <!--  <TextView
-            android:id="@+id/callType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="34dp"
-            android:textColor="@color/incall_call_banner_text_color"
-            android:textSize="24sp"
-            android:padding="8dp"
-            android:text="Incoming Call"
-            android:textAlignment="center" />-->
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/root_container"
+    android:orientation="vertical">
+    <!--  <TextView
+        android:id="@+id/callType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="34dp"
+        android:textColor="@color/incall_call_banner_text_color"
+        android:textSize="24sp"
+        android:padding="8dp"
+        android:text="Incoming Call"
+        android:textAlignment="center" />-->
 
-        <TextView
-            android:id="@+id/callerNameN"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:padding="5dp"
-            android:layout_marginTop="48dp"
-            android:textColor="@color/incall_call_banner_text_color"
-            android:textSize="18sp" />
+    <TextView
+      android:id="@+id/callerNameN"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:padding="5dp"
+      android:layout_marginTop="48dp"
+      android:textColor="@color/incall_call_banner_text_color"
+      android:textSize="18sp"/>
 
-        <include
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="48dp"
-            layout="@layout/static_view" />
+    <include
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_gravity="bottom"
+      android:layout_marginBottom="48dp"
+      layout="@layout/static_view"/>
 
 
-    </RelativeLayout>
+  </RelativeLayout>
 
 </FrameLayout>

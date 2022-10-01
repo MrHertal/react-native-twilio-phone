@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:padding="16dp"
+             android:id="@+id/expanded"
+             android:layout_height="match_parent">
+  <RelativeLayout
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/root_containerV"
+    android:layout_margin="16dp"
     android:padding="16dp"
-    android:id="@+id/expanded"
-    android:layout_height="match_parent">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/root_containerV"
-        android:layout_margin="16dp"
-        android:padding="16dp"
-      android:background="@drawable/layout_bg"
-      android:orientation="vertical">
-        <ImageView
-            android:id="@+id/photo"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/logo_round" />
+    android:background="@drawable/layout_bg"
+    android:orientation="vertical">
+    <ImageView
+      android:id="@+id/photo"
+      android:layout_width="96dp"
+      android:layout_height="96dp"
+      android:layout_centerInParent="true"
+      android:src="@drawable/logo_round"/>
 
-         <TextView
-           android:id="@+id/callerNameV"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_centerHorizontal="true"
-           android:layout_below="@+id/photo"
-           android:padding="5dp"
-           android:textColor="@color/incall_call_banner_text_color"
-           android:textSize="18sp" />
-        <include
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="48dp"
-            layout="@layout/static_view" />
+    <TextView
+      android:id="@+id/callerNameV"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_below="@+id/photo"
+      android:padding="5dp"
+      android:textColor="@color/incall_call_banner_text_color"
+      android:textSize="18sp"/>
+    <include
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_gravity="bottom"
+      android:layout_marginBottom="48dp"
+      layout="@layout/static_view"/>
 
-    </RelativeLayout>
+  </RelativeLayout>
 </FrameLayout>

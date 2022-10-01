@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  package="com.reactnativetwiliophone"
-  >
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.reactnativetwiliophone"
+>
 
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <application tools:node="merge" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+  <application tools:node="merge"/>
 </manifest>

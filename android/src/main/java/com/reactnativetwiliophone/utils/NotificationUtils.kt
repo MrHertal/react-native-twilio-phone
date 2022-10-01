@@ -31,6 +31,7 @@ object NotificationUtils {
       notificationManager.createNotificationChannel(channel)
     }
   }
+
   private fun createNotificationIntent(
     context: Context,
     notificationDataBundle: Bundle,
@@ -51,18 +52,18 @@ object NotificationUtils {
   fun showCallNotification(context: Context, notificationData: ReadableMap, notificationId: Int) {
     val notificationManager = NotificationManagerCompat.from(context)
     val notificationDataBundle = Arguments.toBundle(notificationData)
-    val activityClass = context.packageName+".MainActivity"
+    val activityClass = context.packageName + ".MainActivity"
     val answerIntent = notificationDataBundle?.let {
       createNotificationIntent(context,
-        it,"answer", notificationId, activityClass)
+        it, "answer", notificationId, activityClass)
     }
     val rejectIntent = notificationDataBundle?.let {
       createNotificationIntent(context,
-        it,"reject", notificationId, activityClass)
+        it, "reject", notificationId, activityClass)
     }
     val bodyIntent = notificationDataBundle?.let {
       createNotificationIntent(context,
-        it,"tabbed", notificationId, activityClass)
+        it, "tabbed", notificationId, activityClass)
     }
     createCallChannel(notificationManager)
     val channelId = Const.INCOMING_CALL_CHANNEL_ID;

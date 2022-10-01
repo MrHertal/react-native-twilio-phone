@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/l_containerV"
+              android:id="@+id/l_containerV"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="bottom"
+              android:layout_marginBottom="48dp"
+              android:orientation="horizontal">
+
+
+  <ImageButton
+    android:id="@+id/imgDecline"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
-    android:layout_marginBottom="48dp"
-    android:orientation="horizontal">
+    android:layout_marginStart="4dp"
+    android:layout_weight="1"
+    android:gravity="end"
+    android:clickable="true"
+    android:background="@drawable/roundcorner"
+    android:src="@drawable/call_end_selector"/>
 
 
-    <ImageButton
-        android:id="@+id/imgDecline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_weight="1"
-        android:gravity="end"
-      android:clickable="true"
-        android:background="@drawable/roundcorner"
-      android:src="@drawable/call_end_selector" />
+  <View
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:layout_weight="1"/>
 
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_weight="1" />
-
-    <ImageButton
-        android:id="@+id/imgAnswer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_weight="1"
-      android:clickable="true"
-      android:background="@drawable/roundcorner"
-      android:gravity="start"
-        android:src="@drawable/call_accept_selector" />
+  <ImageButton
+    android:id="@+id/imgAnswer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="4dp"
+    android:layout_weight="1"
+    android:clickable="true"
+    android:background="@drawable/roundcorner"
+    android:gravity="start"
+    android:src="@drawable/call_accept_selector"/>
 
 </LinearLayout>
