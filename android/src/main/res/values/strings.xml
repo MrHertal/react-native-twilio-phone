@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="incomingCall">Incoming call</string>
   <string name="widgetDes">call widget</string>
   <string name="widgetContentDesc">content call widget</string>
   <string name="permission_floating_window">Permissions required to hover above the app</string>
 
+  <!-- NEW WAY -->
+  <string name="show_as_bubble">Show as Bubble</string>
+  <string name="description_icon">Profile icon</string>
+  <string name="description_voice_call">Make a voice call (dummy)</string>
+  <string name="description_send">Send</string>
+  <string name="sender_you">You</string>
+  <string name="label_reply">Reply</string>
+  <string name="description_photo">Photo</string>
+  <string name="hint_input">Reply…</string>
+  <string name="channel_new_call">New Call</string>
+  <string name="channel_new_calls_description">All new incoming calls.</string>
+  <string name="chat_with_contact">Chat with %s</string>
+  <string name="voice_call_explanation">This is a dummy voice call screen.</string>
 </resources>

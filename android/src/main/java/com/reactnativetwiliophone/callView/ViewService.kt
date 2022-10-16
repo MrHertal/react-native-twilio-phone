@@ -4,23 +4,23 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.*
 import android.content.*
-import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.media.Ringtone
 import android.os.*
-import android.telephony.ServiceState
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompat.PRIORITY_MIN
 import androidx.core.app.NotificationManagerCompat
 import com.facebook.react.HeadlessJsTaskService
 import com.reactnativetwiliophone.Actions
 import com.reactnativetwiliophone.Const
 import com.reactnativetwiliophone.R
+import com.reactnativetwiliophone.data.Call
+import com.reactnativetwiliophone.data.Contact
+import com.reactnativetwiliophone.data.NotificationHelper
 import com.reactnativetwiliophone.boradcastReceivers.NotificationsHeadlessReceiver
 import com.reactnativetwiliophone.log
 
@@ -28,18 +28,27 @@ import com.reactnativetwiliophone.log
 class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
 
   var mNotificationManager: NotificationManager? = null
-  var mBinder: IBinder = LocalBinder()
+  private var notificationHelper: NotificationHelper? = null
+
+  private var mBinder: IBinder = LocalBinder()
   private var mIntent: Intent? = null
   private var extras: Bundle? = null
-  var mBound: Boolean = false
-  var isStarted: Boolean? = false
+  private var mBound: Boolean = false
+  private var isStarted: Boolean? = false
   private var isServiceStarted = false
   private var mStartId = 0
   var binder: Binder? = null
+  var callerName: String? = ""
+  var callSid: String? = "0"
+  var textMessage: String? = ""
+  var callerImage: String? = ""
+  var backageName :String = ""
 
   companion object {
     @JvmStatic
     lateinit var instance: ViewService
+    private const val REQUEST_CONTENT = 1
+    private const val REQUEST_BUBBLE = 2
   }
 
   init {
@@ -95,9 +104,9 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
 
   @RequiresApi(Build.VERSION_CODES.O)
   fun startViewForeground() {
-
+    notificationHelper= NotificationHelper(this)
     val channelId = if (isHigherThanAndroid8()) {
-      createNotificationChannel(Const.INCOMING_CALL_CHANNEL_ID, Const.INCOMING_CALL_CHANNEL_NAME)
+       notificationHelper!!.setUpNotificationChannels(Const.INCOMING_CALL_CHANNEL_ID, Const.INCOMING_CALL_CHANNEL_NAME)
     } else {
       // In earlier version, channel ID is not used
       // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
@@ -112,14 +121,26 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    notificationHelper= NotificationHelper(this)
+
+    val startIntent = Intent(this, RingtonePlayingService::class.java)
+    startService(startIntent)
+
+    val prefs: SharedPreferences = this.getSharedPreferences(Const.PREFS_NAME, MODE_PRIVATE)
+     backageName = prefs.getString(Const.BAKAGE_NAME, "com.iriscrm").toString() //"No name defined" is the default value.
+    log("======================== onStartCommand get Bakage name =====================${backageName}")
 
     if (intent != null) {
-      log("onStartCommand action=" + intent.action)
-      val action = intent.action
+      //val action = intent.action
       mIntent = intent
       mStartId = startId
       extras = intent.extras
-      log("using an intent with action $action")
+      callerName=  extras!!.getString(Const.EXTRA_CALLER_NAME)
+      callSid=  extras!!.getString(Const.EXTRA_CALL_SID)
+      callerImage= extras!!.getString(Const.EXTRA_CALLER_IMAGE)
+      textMessage=  extras!!.getString(Const.EXTRA_TXT_MESSAGE)
+      log("onStartCommand extras callerName $callerName")
+
       // if (action === Actions.STOP.name) {
       //  stopSelf()
       //  stopSelfResult(startId)
@@ -128,6 +149,8 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
         setupViewAppearance()
         if (isHigherThanAndroid8()) {
           if (this.isStarted == false) {
+            log("onStartCommand startViewForeground")
+
             startViewForeground()
           }
         }
@@ -141,7 +164,10 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
   override fun onCreate() {
     super.onCreate()
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      startViewForeground()
+      if(extras!=null){
+        startViewForeground()
+
+      }
     }
   }
 
@@ -149,8 +175,8 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
     val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
     val layout = inflater.inflate(R.layout.call_view, null)
     val textView: TextView = layout.findViewById(R.id.callerNameV)
-    if (extras != null) {
-      textView.text = extras!!.getString(Const.CALLER_NAME)
+    if (callerName != ""||callerName != null) {
+      textView.text = callerName
     }
     val imgDeclineBtn: ImageButton = layout.findViewById(R.id.imgDecline)
     val imgAnswerBtn: ImageButton = layout.findViewById(R.id.imgAnswer)
@@ -158,7 +184,7 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
       extras?.let {
         handleIntent(
           it,
-          Const.ANSWER
+          Const.EXTRA_ANSWER
         )
       }
     }
@@ -167,7 +193,7 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
       extras?.let {
         handleIntent(
           it,
-          Const.REJECT
+          Const.EXTRA_REJECT
         )
       }
     }
@@ -188,24 +214,18 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
 
 
   fun setupNotificationBuilder(channelId: String): Notification {
-    val notificationIntent = Intent(this, Class.forName("com.iriscrm.MainActivity")::class.java)
-    val pendingFlags: Int
-    pendingFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-      PendingIntent.FLAG_IMMUTABLE
-    } else {
-      PendingIntent.FLAG_UPDATE_CURRENT
-    }
-    val pendingIntent: PendingIntent =
-      PendingIntent.getActivity(this, 0, notificationIntent, pendingFlags)
 
-    return NotificationCompat.Builder(this, channelId)
-      .setContentIntent(pendingIntent)
-      .setOngoing(true)
-      .setSmallIcon(R.drawable.logo_round)
-      .setContentTitle("Incomming Call")
-      .setTicker("Call_STATUS")
-      .setPriority(PRIORITY_MIN)
-      .setCategory(Notification.CATEGORY_SERVICE).build()
+    val contact: Contact = object : Contact(callSid!!, "contact_$callSid", callerName!!,textMessage!!, callerImage!!) {
+      override fun reply(text: String) = buildReply().apply { this.text = textMessage }
+    }
+
+    log("setupNotificationBuilder callerName ${contact.name}")
+    log("setupNotificationBuilder id ${contact.id}  callSid =${callSid}")
+    log("setupNotificationBuilder scld ${contact.scId}")
+    log("setupNotificationBuilder callerImage ${contact.icon}")
+    log("setupNotificationBuilder textMessage ${contact.message}")
+    val call  = Call(contact)
+    return notificationHelper!!.setupNotificationBuilder(call,true,true,channelId)
 
   }
 
@@ -223,33 +243,22 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
 
   fun stopService(context: Context) {
     try {
+      val stopIntent = Intent(this, RingtonePlayingService::class.java)
+      stopService(stopIntent)
 
       doUnbindService()
-      log("stop service 1")
-
-      // Thread.currentThread().interrupt();
-      // mNotificationManager!!.cancel(Const.NOTIFICATION_ID)
-      //stopForeground(STOP_FOREGROUND_REMOVE)
-      // stopForeground(true)
-      log("stop service 2")
       //stopSelfResult(mStartId);
       tryStopService();
-      log("stop service 3")
       val closeIntent = Intent(context, ViewService::class.java)
-      log("stop service 5")
       stopService(closeIntent)
-      log("success stop service")
     } catch (e: Exception) {
-      log("Error stop service A${e.toString()}")
-
       tryStopService()
     }
     isServiceStarted = false
-    //setServiceState(this, ServiceState.STOPPED)
-
   }
 
   fun handleIntent(extras: Bundle, type: String?) {
+
     try {
       val pendingFlags: Int
       pendingFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -257,7 +266,7 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
       } else {
         PendingIntent.FLAG_UPDATE_CURRENT
       }
-      val appIntent = Intent(this, Class.forName("com.iriscrm.MainActivity"))
+      val appIntent = Intent(this, Class.forName(packageName + ".MainActivity"))
       appIntent.action = Actions.STOP.name
       val contentIntent = PendingIntent.getActivity(
         this,
@@ -270,7 +279,7 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
         this,
         NotificationsHeadlessReceiver::class.java
       )
-      extras.putString(Const.ACTION, type)
+      extras.putString(Const.EXTRA_ACTION, type)
       headlessIntent.putExtra(Const.EXTRA_NOTIFIER, extras)
       val name = startService(headlessIntent)
       if (name != null) {

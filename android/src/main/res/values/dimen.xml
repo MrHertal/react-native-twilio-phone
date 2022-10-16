@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="touch_bar_height">30dp</dimen>
+    <dimen name="close_btn_size">30dp</dimen>
+    <dimen name="close_btn_padding">4dp</dimen>
+    <dimen name="fullscreen_btn_size">30dp</dimen>
+    <dimen name="fullscreen_btn_padding">4dp</dimen>
+    <dimen name="smallscreen_btn_size">30dp</dimen>
+    <dimen name="smallscreen_btn_padding">4dp</dimen>
+    <dimen name="resize_btn_size">30dp</dimen>
+    <dimen name="resize_btn_padding">4dp</dimen>
+</resources>

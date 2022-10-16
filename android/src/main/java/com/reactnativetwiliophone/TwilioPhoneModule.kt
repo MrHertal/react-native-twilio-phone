@@ -1,7 +1,8 @@
 package com.reactnativetwiliophone
 
 import android.content.Context
-import android.content.Intent
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import androidx.core.app.ActivityCompat
@@ -30,6 +31,14 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun register(accessToken: String, deviceToken: String) {
     log("Registering")
+    val acitivity = currentActivity
+    if (acitivity != null) {
+      log("======================== save Bakage name =====================${acitivity.packageName}")
+      val editor: SharedPreferences.Editor = acitivity.getSharedPreferences(Const.PREFS_NAME, MODE_PRIVATE).edit()
+      editor.putString(Const.BAKAGE_NAME, acitivity.packageName)
+      editor.apply()
+    }
+
     StaticConst.IS_RUNNING = true
     Voice.register(
       accessToken,
@@ -87,12 +96,12 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         val from = callInvite.from ?: ""
         val caller = from.replace(Const.CLIENT, "")
         val params = Arguments.createMap()
-        params.putString(Const.CALL_SID, callInvite.callSid)
+        params.putString(Const.EXTRA_CALL_SID, callInvite.callSid)
         params.putString(Const.FROM, caller)
         val pushData = Arguments.createMap()
-        pushData.putString(Const.CALLER_NAME, caller)
-        pushData.putString(Const.CALL_SID, callInvite.callSid)
-        showCallNotification(pushData)
+        pushData.putString(Const.EXTRA_CALLER_NAME, caller)
+        pushData.putString(Const.EXTRA_CALL_SID, callInvite.callSid)
+//        showCallNotification(pushData)
         sendEvent(reactApplicationContext, Const.CALL_INVITE, params)
       }
 
@@ -104,7 +113,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         ViewUtils.stopService(reactApplicationContext)
         activeCallInvites.remove(cancelledCallInvite.callSid)
         val params = Arguments.createMap()
-        params.putString(Const.CALL_SID, cancelledCallInvite.callSid)
+        params.putString(Const.EXTRA_CALL_SID, cancelledCallInvite.callSid)
         ViewService().cancelPushNotification(reactApplicationContext)
         sendEvent(reactApplicationContext, Const.CANCELLED_CALL_INVITE, params)
       }
@@ -129,8 +138,8 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
     activeCalls[callSid] = call
     activeCallInvites.remove(callSid)
     val params = Arguments.createMap()
-    params.putString(Const.CALL_SID, callSid)
-    sendEvent(reactApplicationContext, Const.CANCELLED_CONNECTED, params)
+    params.putString(Const.EXTRA_CALL_SID, callSid)
+    sendEvent(reactApplicationContext, Const.CALL_CONNECTED, params)
   }
 
   @ReactMethod
@@ -323,7 +332,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
        * raised, irrespective of the value of answerOnBridge being set to true or false
        */
       override fun onRinging(call: Call) {
-        log("Call did start ringing")
+        log("================ Call did start ringing ===================")
         /*
          * When [answerOnBridge](https://www.twilio.com/docs/voice/twiml/dial#answeronbridge)
          * is enabled in the <Dial> TwiML verb, the caller will not hear the ringback while
@@ -335,7 +344,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         activeCalls[call.sid!!] = call
 
         val params = Arguments.createMap()
-        params.putString(Const.CALL_SID, call.sid)
+        params.putString(Const.EXTRA_CALL_SID, call.sid)
 
         sendEvent(reactApplicationContext, Const.CALL_RINGING, params)
       }
@@ -344,7 +353,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         log("Call failed to connect: ${error.errorCode}, ${error.message}")
 
         val params = Arguments.createMap()
-        params.putString(Const.CALL_SID, call.sid)
+        params.putString(Const.EXTRA_CALL_SID, call.sid)
         params.putInt(Const.ERROR_CODE, error.errorCode)
         params.putString(Const.ERROR_MESSAGE, error.message)
 
@@ -355,7 +364,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         log("Call did connect")
 
         val params = Arguments.createMap()
-        params.putString("callSid", call.sid)
+        params.putString(Const.EXTRA_CALL_SID, call.sid)
 
         sendEvent(reactApplicationContext, Const.CALL_CONNECTED, params)
       }
@@ -366,7 +375,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
 
         val params = Arguments.createMap()
-        params.putString(Const.CALL_SID, call.sid)
+        params.putString(Const.EXTRA_CALL_SID, call.sid)
         params.putInt(Const.ERROR_CODE, error.errorCode)
         params.putString(Const.ERROR_MESSAGE, error.message)
 
@@ -377,14 +386,14 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
         log("Call did reconnect")
 
         val params = Arguments.createMap()
-        params.putString(Const.CALL_SID, call.sid)
+        params.putString(Const.EXTRA_CALL_SID, call.sid)
 
         sendEvent(reactApplicationContext, Const.CALL_CONNECTED, params)
       }
 
       override fun onDisconnected(call: Call, error: CallException?) {
         val params = Arguments.createMap()
-        params.putString(Const.CALL_SID, call.sid)
+        params.putString(Const.EXTRA_CALL_SID, call.sid)
 
         if (error != null) {
           log("Call disconnected with error: ${error.errorCode}${error.message}")

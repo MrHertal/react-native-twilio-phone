@@ -2,13 +2,19 @@ package com.reactnativetwiliophone.boradcastReceivers
 
 import android.app.PendingIntent
 import android.app.PendingIntent.*
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.app.NotificationManagerCompat
 import com.facebook.react.HeadlessJsTaskService
+import com.facebook.react.ReactApplication
 import com.reactnativetwiliophone.Actions
 import com.reactnativetwiliophone.Const
+import com.reactnativetwiliophone.TwilioPhoneModule
 import com.reactnativetwiliophone.log
+
 
 class NotificationsBroadcastReceiver : BroadcastReceiver() {
 
@@ -19,6 +25,7 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
         intent.getParcelableExtra(Const.EXTRA_NOTIFIER) as Bundle?
       if (notification != null) {
         val action = intent.getStringExtra("action")
+        val callSid = intent.getStringExtra("callSid")
         val notificationId = intent.getIntExtra("notificationId", 1)
         val mainActivityClassName = intent.getStringExtra("activityName")
         val appIntent = Intent(context, mainActivityClassName?.let { Class.forName(it) })
@@ -45,14 +52,25 @@ class NotificationsBroadcastReceiver : BroadcastReceiver() {
           notification.putInt("notificationId", notificationId)
           headlessIntent.putExtra(Const.EXTRA_NOTIFIER, notification)
           val name: ComponentName? = context.startService(headlessIntent)
-          if (action == "answered") {
+          val rnApp = context.applicationContext as ReactApplication
+          val parent = rnApp.reactNativeHost.reactInstanceManager.currentReactContext?.getNativeModule(TwilioPhoneModule::class.java)
 
-          }
-          if (action == "rejected") {
-
-          }
           if (name != null) {
             HeadlessJsTaskService.acquireWakeLockNow(context)
+          }
+          if (action == "answered") {
+            if (parent != null) {
+              if (callSid != null) {
+                parent.acceptCallInvite(callSid)
+              }
+            }
+          }
+          if (action == "rejected") {
+            if (parent != null) {
+              if (callSid != null) {
+                parent.rejectCallInvite(callSid)
+              }
+            }
           }
           if (action != "tabbed") {
             val notificationManager = NotificationManagerCompat.from(context)

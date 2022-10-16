@@ -1,6 +1,5 @@
 package com.reactnativetwiliophone
 
-import android.os.Build
 import android.util.Log
 
 fun log(msg: String) {
@@ -15,18 +14,26 @@ class StaticConst {
 
 object Const {
 
+  //general---------------------------------------
   const val MODULE_NAME = "TwilioPhone"
   const val INCOMING_CALL_CHANNEL_NAME = "incoming_call_channel_name"
   const val INCOMING_CALL_CHANNEL_ID = "incoming_call_channel_id"
   const val NOTIFICATION_ID = 58764854
   const val EXTRA_NOTIFIER = "com.reactnativetwiliophone.notifier"
 
+  //prefs---------------------------------------
+
+  const val PREFS_NAME = "call_prefs"
+  const val BAKAGE_NAME = "backage_name"
+
   //extras---------------------------------------
-  const val ACTION = "action"
-  const val REJECT = "reject"
-  const val ANSWER = "answer"
-  const val CALLER_NAME = "callerName"
-  const val CALL_SID = "callSid"
+  const val EXTRA_ACTION = "action"
+  const val EXTRA_REJECT = "reject"
+  const val EXTRA_ANSWER = "answer"
+  const val EXTRA_CALLER_NAME = "callerName"
+  const val EXTRA_CALL_SID = "callSid"
+  const val EXTRA_CALLER_IMAGE = "callerImage"
+  const val EXTRA_TXT_MESSAGE = "callerMsg"
 
   //events--------------------------------------
   const val REGISTER_SUCCESS = "RegistrationSuccess"
@@ -35,7 +42,6 @@ object Const {
   const val UNREGISTER_SUCCESS = "UnregistrationSuccess"
   const val UNREGISTER_FAILURE = "UnregistrationFailure"
   const val CANCELLED_CALL_INVITE = "CancelledCallInvite"
-  const val CANCELLED_CONNECTED = "CallConnected"
   const val CALL_RINGING = "CallRinging"
   const val CALL_CONNECT_FAILURE = "CallConnectFailure"
   const val CALL_CONNECTED = "CallConnected"

@@ -22,8 +22,8 @@ object ViewUtils {
 
   @SuppressLint("SuspiciousIndentation")
   fun showCallView(context: Context, data: ReadableMap) {
-    val callerName = data.getString(Const.CALLER_NAME)
-    val callSid = data.getString(Const.CALL_SID)
+    val callerName = data.getString(Const.EXTRA_CALLER_NAME)
+    val callSid = data.getString(Const.EXTRA_CALL_SID)
     log("---------------------- showCallView start ------------------------")
 
     if (checkFloatingWindowPermission(context)) {
@@ -31,8 +31,14 @@ object ViewUtils {
         serviceIntent = Intent(context, ViewService::class.java)
         serviceIntent!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         serviceIntent!!.addFlags(FLAG_ACTIVITY_NO_HISTORY)
-        serviceIntent!!.putExtra(Const.CALLER_NAME, callerName)
-        serviceIntent!!.putExtra(Const.CALL_SID, callSid)
+        serviceIntent!!.putExtra(Const.EXTRA_CALL_SID, callSid)
+        serviceIntent!!.putExtra(Const.EXTRA_CALLER_IMAGE, "ic_notify.png")
+        serviceIntent!!.putExtra(Const.EXTRA_TXT_MESSAGE, "Incoming Call ....")
+        serviceIntent!!.putExtra(Const.EXTRA_CALLER_NAME, callerName)
+
+        log("showCallView callerName ${callerName}")
+        log("showCallView callSid ${callSid}")
+
         serviceIntent!!.action = Actions.START.name
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
           context.startForegroundService(serviceIntent)

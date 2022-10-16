@@ -1,5 +1,7 @@
 package com.reactnativetwiliophone
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext

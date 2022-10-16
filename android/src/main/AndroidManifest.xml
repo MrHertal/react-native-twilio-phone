@@ -4,5 +4,21 @@
 >
 
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-  <application tools:node="merge"/>
-</manifest>
+  <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+  <application
+    tools:node="merge">
+
+    <service android:name="com.reactnativetwiliophone.boradcastReceivers.NotificationsHeadlessReceiver"/>
+
+    <service
+      android:name="com.reactnativetwiliophone.callView.ViewService"
+      android:enabled="true"
+      android:exported="false"/>
+
+    <service
+      android:name="com.reactnativetwiliophone.callView.RingtonePlayingService"
+      android:enabled="true"
+      android:exported="false"/>
+  </application>
+
+  </manifest>
