@@ -30,14 +30,7 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun register(accessToken: String, deviceToken: String) {
-    log("Registering")
-    val acitivity = currentActivity
-    if (acitivity != null) {
-      log("======================== save Bakage name =====================${acitivity.packageName}")
-      val editor: SharedPreferences.Editor = acitivity.getSharedPreferences(Const.PREFS_NAME, MODE_PRIVATE).edit()
-      editor.putString(Const.BAKAGE_NAME, acitivity.packageName)
-      editor.apply()
-    }
+    log("twillio Registering ")
 
     StaticConst.IS_RUNNING = true
     Voice.register(
@@ -45,14 +38,20 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
       Voice.RegistrationChannel.FCM,
       deviceToken,
       object : RegistrationListener {
+
+        override fun hashCode(): Int {
+          log("RegistrationListener Registration hashCode hashCode ")
+
+          return super.hashCode()
+        }
         override fun onRegistered(accessToken: String, fcmToken: String) {
-          log("Successfully registered FCM token")
+          log("RegistrationListener Registration onRegistered  FCM token = $fcmToken")
 
           sendEvent(reactApplicationContext, Const.REGISTER_SUCCESS, null)
         }
 
         override fun onError(error: RegistrationException, accessToken: String, fcmToken: String) {
-          log("Registration error: ${error.errorCode}  ${error.message}")
+          log("RegistrationListener Registration error: ${error.errorCode}  ${error.message}")
 
           val params = Arguments.createMap()
           params.putInt(Const.ERROR_CODE, error.errorCode)
@@ -61,6 +60,16 @@ class TwilioPhoneModule(reactContext: ReactApplicationContext) :
           sendEvent(reactApplicationContext, Const.REGISTER_FAILURE, params)
         }
       })
+
+
+    val acitivity = currentActivity
+    if (acitivity != null) {
+      log("on register twillio ======================== save Bakage name =====================${acitivity.packageName}")
+      val editor: SharedPreferences.Editor = acitivity.getSharedPreferences(Const.PREFS_NAME, MODE_PRIVATE).edit()
+      editor.putString(Const.BAKAGE_NAME, acitivity.packageName)
+      editor.apply()
+    }
+
   }
 
   @ReactMethod

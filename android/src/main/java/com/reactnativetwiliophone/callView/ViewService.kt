@@ -246,6 +246,8 @@ class ViewService : ViewServiceConfig(), Logger by LoggerImpl() {
       val stopIntent = Intent(this, RingtonePlayingService::class.java)
       stopService(stopIntent)
 
+      notificationHelper?.removeShortcut("contact_$callSid")
+      notificationHelper?.removeAllShortcuts();
       doUnbindService()
       //stopSelfResult(mStartId);
       tryStopService();

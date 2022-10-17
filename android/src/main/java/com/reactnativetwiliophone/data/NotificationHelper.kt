@@ -27,14 +27,16 @@ import android.os.Build
 import androidx.annotation.WorkerThread
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person.Builder
-import androidx.core.app.RemoteInput
 import androidx.core.content.LocusIdCompat
 import androidx.core.content.getSystemService
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
+import com.facebook.react.bridge.ReactMethod
 import com.reactnativetwiliophone.Const
 import com.reactnativetwiliophone.R
 import com.reactnativetwiliophone.log
+import java.util.*
+
 
 /**
  * Handles all operations related to [Notification].
@@ -86,7 +88,8 @@ class NotificationHelper(private val context: Context) {
     }
 
     @WorkerThread
-    fun updateShortcuts(importantContact: Contact?,) {
+    fun updateShortcuts(importantContact: Contact?) {
+      if (Build.VERSION.SDK_INT < 26) return
       val shortcutManager = context.getSystemService(ShortcutManager::class.java)
 
       if (shortcutManager!!.isRequestPinShortcutSupported) {
@@ -105,32 +108,51 @@ class NotificationHelper(private val context: Context) {
             })
             // Assumes there's already a shortcut with the ID "my-shortcut".
             // The shortcut must be enabled.
-            val pinShortcutInfo = ShortcutInfo.Builder(context,
-              importantContact.scId)
-              .setLocusId(LocusId(importantContact.scId))
-              .setShortLabel("Missed Call")
-              .setIcon(icon)
-              //.setIntent(Intent(Intent.ACTION_MAIN))
-              .setLongLived(true)
-              .setCategories(setOf("com.iriscrm.category.TEXT_SHARE_TARGET"))
-              .setIntent(
-                Intent(context, Class.forName(backageName+ ".MainActivity")::class.java)
-                  .setAction(Intent.ACTION_VIEW)
-                  .setData(
-                    Uri.parse(
-                      "https://com.iriscrm/call/${importantContact.id}"
+            val pinShortcutInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+              ShortcutInfo.Builder(context,
+                importantContact.scId)
+                .setLocusId(LocusId(importantContact.scId))
+                .setShortLabel("Missed Call")
+                .setIcon(icon)
+                //.setIntent(Intent(Intent.ACTION_MAIN))
+                .setLongLived(true)
+                .setCategories(setOf("com.iriscrm.category.TEXT_SHARE_TARGET"))
+                .setIntent(
+                  Intent(context, Class.forName(backageName+ ".MainActivity")::class.java)
+                    .setAction(Intent.ACTION_VIEW)
+                    .setData(
+                      Uri.parse(
+                        "https://com.iriscrm/call/${importantContact.id}"
+                      )
                     )
-                  )
-              )
-              .setPerson(
-                android.app.Person.Builder()
-                  .setName(importantContact.name)
-                  .setIcon(icon)
-                  .build()
-              )
-              .build()
+                )
+                .setPerson(
+                  android.app.Person.Builder()
+                    .setName(importantContact.name)
+                    .setIcon(icon)
+                    .build()
+                )
+                .build()
+            } else {
+              ShortcutInfo.Builder(context,
+                importantContact.scId)
+                .setShortLabel("Missed Call")
+                .setIcon(icon)
+                //.setIntent(Intent(Intent.ACTION_MAIN))
+                .setCategories(setOf("com.iriscrm.category.TEXT_SHARE_TARGET"))
+                .setIntent(
+                  Intent(context, Class.forName(backageName+ ".MainActivity")::class.java)
+                    .setAction(Intent.ACTION_VIEW)
+                    .setData(
+                      Uri.parse(
+                        "https://com.iriscrm/call/${importantContact.id}"
+                      )
+                    )
+                )
+                .build()
+            }
 
-            // Create the PendingIntent object only if your app needs to be notified
+          // Create the PendingIntent object only if your app needs to be notified
             // that the user allowed the shortcut to be pinned. Note that, if the
             // pinning operation fails, your app isn't notified. We assume here that the
             // app has implemented a method called createShortcutResultIntent() that
@@ -146,8 +168,7 @@ class NotificationHelper(private val context: Context) {
               successCallback.intentSender)
 
           val listShorts = listOf(importantContact.scId)
-          shortcutManager.removeLongLivedShortcuts(listShorts)
-          shortcutManager.removeAllDynamicShortcuts()
+
         /* // val pinShortcutInfo = ShortcutInfo.Builder(context, importantContact.shortcutId).build()
           val icon = IconCompat.createWithAdaptiveBitmap(
             context.resources.assets.open("ic_notify.png").use { input ->
@@ -202,7 +223,27 @@ class NotificationHelper(private val context: Context) {
 
     }
 
-    private fun flagUpdateCurrent(mutable: Boolean): Int {
+  fun removeShortcut(id: String?) {
+    log("======================== removeShortcut===================== id $id")
+
+    if (Build.VERSION.SDK_INT < 25) return
+    val shortcutManager: ShortcutManager =context.getSystemService(ShortcutManager::class.java)
+    shortcutManager.removeDynamicShortcuts(Arrays.asList(id))
+    if (Build.VERSION.SDK_INT < 30) return
+    shortcutManager.removeLongLivedShortcuts(Arrays.asList(id))
+
+  }
+
+  @ReactMethod
+  fun removeAllShortcuts() {
+    log("======================== removeAllShortcuts=====================")
+
+    if (Build.VERSION.SDK_INT < 25) return
+    val shortcutManager: ShortcutManager = context.getSystemService(ShortcutManager::class.java)
+    shortcutManager.removeAllDynamicShortcuts()
+  }
+
+  private fun flagUpdateCurrent(mutable: Boolean): Int {
         return if (mutable) {
             if (Build.VERSION.SDK_INT >= 31) {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
