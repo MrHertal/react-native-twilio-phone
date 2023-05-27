@@ -18,7 +18,7 @@ Supported versions:
 - iOS 11+
 - Android API 30+
 
-## Example
+## Example 1
 
 An example app is provided in the [example folder](https://github.com/MrHertal/react-native-twilio-phone/tree/master/example). Check [below instructions](#Example-app) to run it.
 
